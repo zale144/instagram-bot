@@ -1,0 +1,38 @@
+version: "2.1"
+services:
+  db:
+    image: mysql:5.7
+    container_name: cabani-db
+    ports:
+    - 3306:3306
+    expose:
+    - 3306
+    environment:
+      MYSQL_DATABASE: cabani_insta
+      MYSQL_ROOT_PASSWORD: root
+      TZ: Europe/Berlin
+    healthcheck:
+      test: mysqladmin -uroot -proot ping
+      interval: 2s
+      timeout: 5s
+      retries: 30
+
+  web:
+    image: instagram-bot/web
+    build: .
+    container_name: instagram-bot.web
+    ports:
+    - 4040:4040
+    links:
+    - db
+    depends_on:
+      db:
+        condition: service_healthy
+    entrypoint: ./instagram-bot.web # http://78.30.131.215:4040
+
+  consul:
+	image: consul:latest
+	ports:
+	- "8300:8300"
+	- "8400:8400"
+	- "8500:8500"

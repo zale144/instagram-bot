@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html><head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Login</title>
+    <link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.min.css" rel="stylesheet">
+    <style></style>
+    <script type="text/javascript" src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+    <script type="text/javascript" src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
+    <script type="text/javascript"></script>
+    <style>
+        .App-header {
+            background-color: #222;
+            height: 100px;
+            padding: 20px;
+            color: white;
+        }
+        h1, h3 {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+<link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.min.css" rel="stylesheet" id="bootstrap-css">
+<script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
+
+<header class="App-header">
+    <h1>Cabani Instagram</h1>
+</header>
+<div class="container">
+    <div class="row">
+        <div class="span12">
+            <div class="" id="">
+                <div class="">
+                    <h3>Login with your Instagram Account</h3>
+                </div>
+                <div class="well">
+                    <div id="myTabContent" class="tab-content">
+                        <div class="tab-pane active" id="login">
+                            <form class="form-horizontal">
+                                <div class="control-group">
+                                    <!-- Username -->
+                                    <label class="control-label" for="username">Instagram Username</label>
+                                    <div class="controls">
+                                        <input type="text" id="username" name="username" placeholder="" class="input-xlarge">
+                                    </div>
+                                </div>
+                                <div class="control-group">
+                                    <!-- Password-->
+                                    <label class="control-label" for="password">Instagram Password</label>
+                                    <div class="controls">
+                                        <input type="password" id="password" name="password" placeholder="" class="input-xlarge">
+                                    </div>
+                                </div>
+                                <div class="control-group">
+                                    <!-- Button -->
+                                    <div class="controls">
+                                        <button class="btn btn-success" onclick="event.preventDefault();
+                                                        const errContainer = document.getElementById('error-container');
+                                                        errContainer.innerHTML = '<img src=/static/image/ajax-loader.gif />';
+                                                        let headers = new Headers();
+                                                        headers.set('Authorization', 'Basic ' + btoa(document.getElementById('username').value +
+                                                         ':' + document.getElementById('password').value));
+                                                        fetch('/login', {
+                                                            method: 'POST',
+                                                            headers: headers,
+                                                            credentials: 'same-origin'
+                                                        })
+                                                        .then(res => {
+                                                            if (!res.ok) {
+                                                                throw res.json();
+                                                            } else {
+                                                                return res.json()
+                                                            }
+                                                        })
+                                                        .then(
+                                                        (result) => {
+                                                            if (result.token) {
+                                                                localStorage.setItem('access_token', result.token);
+                                                                location.href = '/';
+                                                            }
+                                                        }).catch((err) => {
+                                                            err.then(data => {
+                                                                errContainer.innerHTML = data.message;
+                                                            })
+                                                        })
+                                        ">Login</button>
+                                        <span style="margin-left: 20px; color:red;" id="error-container"></span>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div></body></html>

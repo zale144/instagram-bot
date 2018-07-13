@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+package htmlToimage.proto;
+
+service HtmlToImage {
+    rpc Process(ImageRequest) returns (stream ImageResponse) {}
+}
+
+message ImageRequest {
+    string Input = 1;
+    string Format = 2;
+    int32 Height = 3;
+    int32 Width = 4;
+    float Zoom = 5;
+    int32 Quality = 6;
+	int32 CropX = 7;
+	int32 CropY = 8;
+	int32 CropW = 9;
+	int32 CropH = 10;
+	string Html = 11;
+	string Output = 12;
+	string Name = 13;
+}
+
+message ImageResponse {
+    bytes image = 1;
+}
