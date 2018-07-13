@@ -5,15 +5,16 @@ import (
 	"flag"
 	"fmt"
 	"html/template"
-	"instagram-bot/web/clients"
-	"instagram-bot/web/model"
-	"instagram-bot/web/resource"
 	"io"
 	"log"
 	"net/http"
 	"os"
 	"os/exec"
 	"strings"
+
+	"github.com/zale144/instagram-bot/web/clients"
+	"github.com/zale144/instagram-bot/web/model"
+	"github.com/zale144/instagram-bot/web/resource"
 
 	session "github.com/zale144/instagram-bot/sessions/proto"
 

@@ -3,13 +3,14 @@ package resource
 import (
 	"errors"
 	"fmt"
-	"instagram-bot/web/clients"
-	"instagram-bot/web/model"
-	"instagram-bot/web/storage"
 	"log"
 	"net/http"
 	"os"
 	"strconv"
+
+	"github.com/zale144/instagram-bot/web/clients"
+	"github.com/zale144/instagram-bot/web/model"
+	"github.com/zale144/instagram-bot/web/storage"
 
 	htmlToImage "github.com/zale144/instagram-bot/htmlToimage/proto"
 	session "github.com/zale144/instagram-bot/sessions/proto"

@@ -2,12 +2,13 @@ package resource
 
 import (
 	"fmt"
-	"instagram-bot/web/clients"
-	"instagram-bot/web/model"
 	"log"
 	"net/http"
 	"strings"
 	"time"
+
+	"github.com/zale144/instagram-bot/web/clients"
+	"github.com/zale144/instagram-bot/web/model"
 
 	session "github.com/zale144/instagram-bot/sessions/proto"
 

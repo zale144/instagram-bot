@@ -1,10 +1,11 @@
 package main
 
 import (
-	"instagram-bot/sessions/handlers"
-	proto "instagram-bot/sessions/proto"
-	"instagram-bot/sessions/session"
 	"log"
+
+	"github.com/zale144/instagram-bot/sessions/handlers"
+	proto "github.com/zale144/instagram-bot/sessions/proto"
+	"github.com/zale144/instagram-bot/sessions/session"
 
 	micro "github.com/micro/go-micro"
 )

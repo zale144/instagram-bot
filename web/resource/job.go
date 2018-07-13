@@ -2,8 +2,9 @@ package resource
 
 import (
 	"errors"
-	"instagram-bot/web/storage"
 	"net/http"
+
+	"github.com/zale144/instagram-bot/web/storage"
 
 	"github.com/labstack/echo"
 )

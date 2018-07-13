@@ -2,7 +2,8 @@ package storage
 
 import (
 	"fmt"
-	"instagram-bot/web/model"
+
+	"github.com/zale144/instagram-bot/web/model"
 
 	"github.com/jinzhu/gorm"
 )

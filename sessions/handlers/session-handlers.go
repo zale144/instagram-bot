@@ -3,11 +3,13 @@ package handlers
 import (
 	"context"
 	"fmt"
-	"instagram-bot/sessions/model"
-	"instagram-bot/sessions/proto"
-	proto "instagram-bot/sessions/proto"
-	"instagram-bot/sessions/session"
 	"log"
+
+	proto "github.com/zale144/instagram-bot/sessions/proto"
+
+	"github.com/zale144/instagram-bot/sessions/model"
+	"github.com/zale144/instagram-bot/sessions/proto"
+	"github.com/zale144/instagram-bot/sessions/session"
 )
 
 type Session struct{}

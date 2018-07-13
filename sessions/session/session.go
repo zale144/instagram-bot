@@ -3,12 +3,14 @@ package session
 import (
 	"errors"
 	"fmt"
-	"instagram-bot/sessions/model"
-	proto "instagram-bot/sessions/proto"
 	"log"
 	"net/url"
 	"sort"
 	"time"
+
+	proto "github.com/zale144/instagram-bot/sessions/proto"
+
+	"github.com/zale144/instagram-bot/sessions/model"
 
 	"github.com/zale144/goinsta"
 )
