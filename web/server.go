@@ -13,6 +13,7 @@ import (
 	"os/exec"
 	"strings"
 
+	"github.com/zale144/instagram-bot/web/handlers"
 	"github.com/zale144/instagram-bot/web/model"
 	"github.com/zale144/instagram-bot/web/resource"
 
@@ -26,7 +27,7 @@ import (
 
 var (
 	outCh  = make(chan string)
-	dbInfo = flag.String("db-info", "root:root@tcp(localhost:3306)/cabani_insta?parseTime=true", "database connection string")
+	dbInfo = flag.String("db-info", "root:root@tcp(db:3306)/insta_db?parseTime=true", "database connection string")
 )
 
 func main() {
@@ -34,6 +35,8 @@ func main() {
 	model.AppURL = "http://localhost:" + model.Port
 
 	flag.Parse()
+
+	go handlers.RegisterService()
 
 	model.DBInfo = *dbInfo
 	err := model.InitDB()

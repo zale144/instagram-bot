@@ -1,107 +1,56 @@
-version: "2.1"
+version: "3.6"
 services:
-  db:
-    image: mysql:5.7
-    container_name: web-db
-    dns: 172.10.0.10
-    dns_search: .
-    environment:
-      SERVICE_3306_NAME: "db"
-      SERVICE_3306_CHECK_TCP: "true"
-      SERVICE_3306_CHECK_INTERVAL: "2s"
-      MYSQL_DATABASE: insta_db
-      MYSQL_ROOT_PASSWORD: root
-      TZ: Europe/Berlin
-    networks:
-    - DeviceServerNet
-    ports:
-    - 3306:3306
-    expose:
-    - 3306
-    restart: always
       
   web:
     image: instagram-bot/web
     build: ./web
-    container_name: instagram-bot.web
     depends_on:
     - db
     - consul
-    - registrator
-    - sessions
-    links:
-    - sessions
-    - consul
-    - db
-    dns: 172.10.0.10
-    dns_search: .
     environment:
-      SERVICE_4040_NAME: "instagram-bot.web"
-    networks:
-    - DeviceServerNet
-    tty: true
+      MICRO_REGISTRY: "consul"
+      MICRO_REGISTRY_ADDRESS: "consul"
+      DEBUG: 1
     ports:
     - 4040:4040
-    restart: always
     entrypoint: ./instagram-bot.web http://localhost:4040
+
+  htmlToimage:
+    image: instagram-bot/htmltoimage
+    build: ./htmlToimage
+    depends_on:
+    - consul
+    environment:
+      MICRO_REGISTRY: "consul"
+      MICRO_REGISTRY_ADDRESS: "consul"
+      DEBUG: 1
+    entrypoint: ./htmltoimage
 
   sessions:
     image: instagram-bot/sessions
     build: ./sessions
-    container_name: instagram-bot.sessions
     depends_on:
     - consul
-    - registrator
-    links:
-    - consul
-    dns: 172.10.0.10
-    dns_search: .
     environment:
-      SERVICE_4041_NAME: "instagram-bot.sessions"
-    networks:
-    - DeviceServerNet
-    tty: true
-    ports:
-    - 4041:4041
-    restart: always
+      MICRO_REGISTRY: "consul"
+      MICRO_REGISTRY_ADDRESS: "consul"
+      DEBUG: 1
     entrypoint: ./instagram-bot.sessions
 
   consul:
     image: consul:latest
-    dns:
-      - 127.0.0.1
-    dns_search: .
-    expose:
-      - "53"
-      - "53/udp"
-      - 8500
+    command: agent -server -bootstrap-expect=1 -log-level=warn -ui -client=0.0.0.0
+    hostname: consul
     ports:
     - 8500:8500
-    command: agent -dev -bind=172.10.0.10 -client=0.0.0.0
-    networks:
-      DeviceServerNet:
-        ipv4_address: 172.10.0.10
 
-  registrator:
-    command: -internal consul://consul:8500
-    depends_on:
-      - consul
-    image: gliderlabs/registrator:latest
-    dns:
-      - 172.10.0.10
-    dns_search: .
-    networks:
-      - DeviceServerNet
-    restart: always
-    volumes:
-      - "/var/run/docker.sock:/tmp/docker.sock"
-
-# Network Settings
-networks:
-  DeviceServerNet:
-    ipam:
-      driver: default
-      config:
-        - subnet: 172.10.0.0/24
-          ip_range: 172.10.0.0/24
-          gateway: 172.10.0.254
+  db:
+    image: mysql:5.7
+    container_name: web-db
+    environment:
+      MYSQL_DATABASE: insta_db
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+    - 3306:3306
+    expose:
+    - 3306

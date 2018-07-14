@@ -10,9 +10,9 @@ import (
 	"github.com/zale144/instagram-bot/sessions/session"
 )
 
-type Session struct{}
+type Service struct{}
 
-func (m *Session) Message(ctx context.Context, req *proto.MessageRequest, rsp *proto.MessageResponse) error {
+func (m *Service) Message(ctx context.Context, req *proto.MessageRequest, rsp *proto.MessageResponse) error {
 	fmt.Printf("got: Sender: %s, Title: %s, Ricipient: %s, Text: %s", req.Sender, req.Title, req.Recipient, req.Text)
 
 	s, err := session.GetSession(&model.Account{Username: req.Sender})
@@ -36,7 +36,7 @@ func (m *Session) Message(ctx context.Context, req *proto.MessageRequest, rsp *p
 	return err
 }
 
-func (m *Session) Get(ctx context.Context, req *proto.SessionRequest, rsp *proto.SessionResponse) error {
+func (m *Service) Get(ctx context.Context, req *proto.SessionRequest, rsp *proto.SessionResponse) error {
 	_, err := session.GetSession(&model.Account{
 		Username: req.Account,
 		Password: req.Password,
@@ -48,7 +48,7 @@ func (m *Session) Get(ctx context.Context, req *proto.SessionRequest, rsp *proto
 	return err
 }
 
-func (m *Session) FollowedUsers(ctx context.Context, req *proto.SessionRequest, rsp *proto.Users) error {
+func (m *Service) FollowedUsers(ctx context.Context, req *proto.SessionRequest, rsp *proto.Users) error {
 	s, err := session.GetSession(&model.Account{
 		Username: req.Account,
 	})
@@ -72,7 +72,7 @@ func (m *Session) FollowedUsers(ctx context.Context, req *proto.SessionRequest, 
 	return err
 }
 
-func (m *Session) UserInfo(ctx context.Context, req *proto.UserReq, rsp *proto.UserResp) error {
+func (m *Service) UserInfo(ctx context.Context, req *proto.UserReq, rsp *proto.UserResp) error {
 	s, err := session.GetSession(&model.Account{
 		Username: req.Account,
 	})
@@ -93,7 +93,7 @@ func (m *Session) UserInfo(ctx context.Context, req *proto.UserReq, rsp *proto.U
 	return err
 }
 
-func (m *Session) Remove(ctx context.Context, req *proto.SessionRequest, rsp *proto.SessionResponse) error {
+func (m *Service) Remove(ctx context.Context, req *proto.SessionRequest, rsp *proto.SessionResponse) error {
 	session.Remove(req.Account)
 	rsp.Error = ""
 	return nil

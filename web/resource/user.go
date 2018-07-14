@@ -9,10 +9,10 @@ import (
 	"os"
 	"strconv"
 
+	"github.com/zale144/instagram-bot/web/handlers"
 	"github.com/zale144/instagram-bot/web/model"
 	"github.com/zale144/instagram-bot/web/storage"
 
-	microclient "github.com/micro/go-micro/client"
 	htmlToImage "github.com/zale144/instagram-bot/htmlToimage/proto"
 	sess "github.com/zale144/instagram-bot/sessions/proto"
 
@@ -30,7 +30,7 @@ func (ur UserResource) GetAllFollowed(c echo.Context) error {
 	username := claims.Name
 
 	// get all followed users
-	sClient := sess.NewSessionService("instagram.bot.session", microclient.DefaultClient)
+	sClient := sess.NewSessionService("instagram.bot.session", handlers.Srv.Client())
 	rsp, err := sClient.FollowedUsers(context.Background(), &sess.SessionRequest{
 		Account: username,
 	})
@@ -46,7 +46,7 @@ func (ur UserResource) GetProfile(c echo.Context) error {
 	username := c.Param("account")
 	// get the session struct from the cache
 
-	sClient := sess.NewSessionService("instagram.bot.session", microclient.DefaultClient)
+	sClient := sess.NewSessionService("instagram.bot.session", handlers.Srv.Client())
 	resp, err := sClient.UserInfo(context.Background(), &sess.UserReq{
 		Account:  username,
 		Username: c.Param("user"),
@@ -241,7 +241,7 @@ func (ur UserResource) Process(params map[string]string) (string, error) {
 	if err == nil {
 		options.Zoom = float32(zoom)
 	}
-	hClient := htmlToImage.NewHtmlToImageService("instagram.bot.htmltoimage", microclient.DefaultClient)
+	hClient := htmlToImage.NewHtmlToImageService("instagram.bot.htmltoimage", handlers.Srv.Client())
 	hRsp, err := hClient.Process(context.Background(), &options)
 
 	path := "public/static/image/profiles/" + options.Name + ".jpg"
@@ -262,7 +262,7 @@ func (ur UserResource) Process(params map[string]string) (string, error) {
 	}
 	message := model.AppURL + "/calling-card/" + params["username"]
 
-	sClient := sess.NewSessionService("instagram.bot.session", microclient.DefaultClient)
+	sClient := sess.NewSessionService("instagram.bot.session", handlers.Srv.Client())
 	sRsp, err := sClient.Message(context.TODO(), &sess.MessageRequest{
 		Sender:    params["account"],
 		Recipient: params["username"],

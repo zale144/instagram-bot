@@ -110,6 +110,12 @@
 
 [[projects]]
   branch = "master"
+  name = "github.com/micro/cli"
+  packages = ["."]
+  revision = "3d2263bb092286dde294a31049c92665f8373820"
+
+[[projects]]
+  branch = "master"
   name = "github.com/micro/go-log"
   packages = ["."]
   revision = "cbfa9447f9b655f8e66583237e51f40ca9bff860"
@@ -117,22 +123,29 @@
 [[projects]]
   name = "github.com/micro/go-micro"
   packages = [
+    ".",
     "broker",
     "broker/codec",
     "broker/codec/json",
+    "broker/http",
     "client",
+    "cmd",
     "codec",
     "codec/jsonrpc",
     "codec/protorpc",
     "errors",
     "metadata",
     "registry",
+    "registry/consul",
+    "registry/mdns",
     "selector",
+    "selector/cache",
     "server",
     "server/debug",
     "server/debug/proto",
     "transport",
-    "transport/codec"
+    "transport/codec",
+    "transport/http"
   ]
   revision = "5372707d0ec1ebd736bec36818ddb2e700606589"
   version = "v0.9.0"
@@ -145,6 +158,12 @@
 
 [[projects]]
   branch = "master"
+  name = "github.com/micro/mdns"
+  packages = ["."]
+  revision = "cdf30746f9f70dc7a366d3d885792a092fd83102"
+
+[[projects]]
+  branch = "master"
   name = "github.com/micro/util"
   packages = [
     "go/lib/addr",
@@ -152,6 +171,12 @@
     "go/lib/tls"
   ]
   revision = "4b7ed83e8520ab8fe6e5ef61fa2ede94b32f8602"
+
+[[projects]]
+  name = "github.com/miekg/dns"
+  packages = ["."]
+  revision = "5a2b9fab83ff0f8bfc99684bd5f43a37abe560f1"
+  version = "v1.0.8"
 
 [[projects]]
   branch = "master"
@@ -209,9 +234,24 @@
   name = "golang.org/x/crypto"
   packages = [
     "acme",
-    "acme/autocert"
+    "acme/autocert",
+    "ed25519",
+    "ed25519/internal/edwards25519"
   ]
   revision = "a49355c7e3f8fe157a85be2f77e6e269a0f89602"
+
+[[projects]]
+  branch = "master"
+  name = "golang.org/x/net"
+  packages = [
+    "bpf",
+    "context",
+    "internal/iana",
+    "internal/socket",
+    "ipv4",
+    "ipv6"
+  ]
+  revision = "d0887baf81f4598189d4e12a37c6da86f0bba4d0"
 
 [[projects]]
   branch = "master"
@@ -228,6 +268,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "c6ccc17e87a64559a513431b9489d0b17c9e8b1891b78555e72f411b25d58897"
+  inputs-digest = "e6185a1fac2ce0eae4efca134d13b229cbbb9dcd76f018c74dbb692d11fa7817"
   solver-name = "gps-cdcl"
   solver-version = 1

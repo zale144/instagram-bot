@@ -22,7 +22,8 @@ func GenerateImage(options *proto.ImageRequest) ([]byte, error) {
 	if err != nil {
 		return []byte{}, err
 	}
-	cmd := exec.Command("wkhtmltoimage", arr...)
+
+	cmd := exec.Command("./wkhtmltoimag", arr...)
 
 	if options.Html != "" {
 		cmd.Stdin = strings.NewReader(options.Html)

@@ -8,14 +8,12 @@ import (
 	"strings"
 	"time"
 
-	microclient "github.com/micro/go-micro/client"
-	"github.com/zale144/instagram-bot/web/model"
-
-	sess "github.com/zale144/instagram-bot/sessions/proto"
-
 	"github.com/dchest/authcookie"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/labstack/echo"
+	sess "github.com/zale144/instagram-bot/sessions/proto"
+	"github.com/zale144/instagram-bot/web/handlers"
+	"github.com/zale144/instagram-bot/web/model"
 )
 
 type AccountResource struct{}
@@ -41,7 +39,7 @@ func (ar AccountResource) Login(c echo.Context) error {
 	if username == "" || password == "" {
 		return echo.ErrUnauthorized
 	}
-	sClient := sess.NewSessionService("instagram.bot.session", microclient.DefaultClient)
+	sClient := sess.NewSessionService("instagram.bot.session", handlers.Srv.Client())
 	rsp, err := sClient.Get(context.TODO(), &sess.SessionRequest{
 		Account:  username,
 		Password: password,
@@ -94,7 +92,7 @@ func (ar AccountResource) Logout(c echo.Context) error {
 
 	user, err := GetUsernameFromCookie(&c)
 	if err == nil {
-		client := sess.NewSessionService("instagram.bot.session", microclient.DefaultClient)
+		client := sess.NewSessionService("instagram.bot.session", handlers.Srv.Client())
 		rsp, err := client.Remove(context.TODO(), &sess.SessionRequest{
 			Account: user,
 		})

@@ -20,7 +20,7 @@ func main() {
 
 	srv.Init()
 
-	proto.RegisterSessionHandler(srv.Server(), &handlers.Session{})
+	proto.RegisterSessionHandler(srv.Server(), &handlers.Service{})
 
 	if err := srv.Run(); err != nil {
 		log.Fatal(err)

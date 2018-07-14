@@ -3,3 +3,9 @@
 web/vendor
 htmlToimage/vendor
 sessions/vendor
+sessions/debug
+htmlToimage/debug
+htmlToimage/htmlToimage
+sessions/zale144
+web/web
+web/debug
