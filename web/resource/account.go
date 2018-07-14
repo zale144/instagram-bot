@@ -1,16 +1,17 @@
 package resource
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"net/http"
 	"strings"
 	"time"
 
-	"github.com/zale144/instagram-bot/web/clients"
+	microclient "github.com/micro/go-micro/client"
 	"github.com/zale144/instagram-bot/web/model"
 
-	session "github.com/zale144/instagram-bot/sessions/proto"
+	sess "github.com/zale144/instagram-bot/sessions/proto"
 
 	"github.com/dchest/authcookie"
 	"github.com/dgrijalva/jwt-go"
@@ -40,8 +41,8 @@ func (ar AccountResource) Login(c echo.Context) error {
 	if username == "" || password == "" {
 		return echo.ErrUnauthorized
 	}
-	client := *clients.SessClient
-	rsp, err := client.Get(*clients.SessCtx, &session.SessionRequest{
+	sClient := sess.NewSessionService("instagram.bot.session", microclient.DefaultClient)
+	rsp, err := sClient.Get(context.TODO(), &sess.SessionRequest{
 		Account:  username,
 		Password: password,
 	})
@@ -93,8 +94,8 @@ func (ar AccountResource) Logout(c echo.Context) error {
 
 	user, err := GetUsernameFromCookie(&c)
 	if err == nil {
-		client := *clients.SessClient
-		rsp, err := client.Remove(*clients.SessCtx, &session.SessionRequest{
+		client := sess.NewSessionService("instagram.bot.session", microclient.DefaultClient)
+		rsp, err := client.Remove(context.TODO(), &sess.SessionRequest{
 			Account: user,
 		})
 		if err != nil || rsp.Error != "" {

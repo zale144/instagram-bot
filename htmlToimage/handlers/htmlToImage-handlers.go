@@ -4,8 +4,6 @@ import (
 	"context"
 	"log"
 
-	"github.com/zale144/instagram-bot/htmlToimage/proto"
-
 	proto "github.com/zale144/instagram-bot/htmlToimage/proto"
 
 	htmlToimage "github.com/zale144/instagram-bot/htmlToimage/process"
@@ -19,7 +17,7 @@ func (h HtmlToImage) Process(ctx context.Context, req *proto.ImageRequest, rsp p
 		log.Println(err)
 		return err
 	}
-	err = rsp.Send(&htmlToimage_proto.ImageResponse{Image: res})
+	err = rsp.Send(&proto.ImageResponse{Image: res})
 	if err != nil {
 		log.Println(err)
 		return err

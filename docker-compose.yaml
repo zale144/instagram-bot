@@ -2,37 +2,106 @@ version: "2.1"
 services:
   db:
     image: mysql:5.7
-    container_name: cabani-db
+    container_name: web-db
+    dns: 172.10.0.10
+    dns_search: .
+    environment:
+      SERVICE_3306_NAME: "db"
+      SERVICE_3306_CHECK_TCP: "true"
+      SERVICE_3306_CHECK_INTERVAL: "2s"
+      MYSQL_DATABASE: insta_db
+      MYSQL_ROOT_PASSWORD: root
+      TZ: Europe/Berlin
+    networks:
+    - DeviceServerNet
     ports:
     - 3306:3306
     expose:
     - 3306
-    environment:
-      MYSQL_DATABASE: cabani_insta
-      MYSQL_ROOT_PASSWORD: root
-      TZ: Europe/Berlin
-    healthcheck:
-      test: mysqladmin -uroot -proot ping
-      interval: 2s
-      timeout: 5s
-      retries: 30
-
+    restart: always
+      
   web:
     image: instagram-bot/web
-    build: .
+    build: ./web
     container_name: instagram-bot.web
+    depends_on:
+    - db
+    - consul
+    - registrator
+    - sessions
+    links:
+    - sessions
+    - consul
+    - db
+    dns: 172.10.0.10
+    dns_search: .
+    environment:
+      SERVICE_4040_NAME: "instagram-bot.web"
+    networks:
+    - DeviceServerNet
+    tty: true
     ports:
     - 4040:4040
-    links:
-    - db
+    restart: always
+    entrypoint: ./instagram-bot.web http://localhost:4040
+
+  sessions:
+    image: instagram-bot/sessions
+    build: ./sessions
+    container_name: instagram-bot.sessions
     depends_on:
-      db:
-        condition: service_healthy
-    entrypoint: ./instagram-bot.web # http://78.30.131.215:4040
+    - consul
+    - registrator
+    links:
+    - consul
+    dns: 172.10.0.10
+    dns_search: .
+    environment:
+      SERVICE_4041_NAME: "instagram-bot.sessions"
+    networks:
+    - DeviceServerNet
+    tty: true
+    ports:
+    - 4041:4041
+    restart: always
+    entrypoint: ./instagram-bot.sessions
 
   consul:
-	image: consul:latest
-	ports:
-	- "8300:8300"
-	- "8400:8400"
-	- "8500:8500"
+    image: consul:latest
+    dns:
+      - 127.0.0.1
+    dns_search: .
+    expose:
+      - "53"
+      - "53/udp"
+      - 8500
+    ports:
+    - 8500:8500
+    command: agent -dev -bind=172.10.0.10 -client=0.0.0.0
+    networks:
+      DeviceServerNet:
+        ipv4_address: 172.10.0.10
+
+  registrator:
+    command: -internal consul://consul:8500
+    depends_on:
+      - consul
+    image: gliderlabs/registrator:latest
+    dns:
+      - 172.10.0.10
+    dns_search: .
+    networks:
+      - DeviceServerNet
+    restart: always
+    volumes:
+      - "/var/run/docker.sock:/tmp/docker.sock"
+
+# Network Settings
+networks:
+  DeviceServerNet:
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.10.0.0/24
+          ip_range: 172.10.0.0/24
+          gateway: 172.10.0.254

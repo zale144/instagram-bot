@@ -5,10 +5,8 @@ import (
 	"fmt"
 	"log"
 
-	proto "github.com/zale144/instagram-bot/sessions/proto"
-
 	"github.com/zale144/instagram-bot/sessions/model"
-	"github.com/zale144/instagram-bot/sessions/proto"
+	proto "github.com/zale144/instagram-bot/sessions/proto"
 	"github.com/zale144/instagram-bot/sessions/session"
 )
 
@@ -58,9 +56,9 @@ func (m *Session) FollowedUsers(ctx context.Context, req *proto.SessionRequest, 
 		log.Println(err)
 		return err
 	}
-	users := []*sessions_proto.User{}
+	users := []*proto.User{}
 	for _, v := range s.GetAllFollowedUsers() {
-		user := &sessions_proto.User{
+		user := &proto.User{
 			Username:       v.Username,
 			FullName:       v.FullName,
 			Description:    v.Description,
@@ -83,7 +81,7 @@ func (m *Session) UserInfo(ctx context.Context, req *proto.UserReq, rsp *proto.U
 		return err
 	}
 	v, err := s.GetProfileInfo(req.Username)
-	user := &sessions_proto.User{
+	user := &proto.User{
 		Username:       v.Username,
 		FullName:       v.FullName,
 		Description:    v.Description,

@@ -12,7 +12,7 @@ import (
 
 func main() {
 	service := micro.NewService(
-		micro.Name("instagram-bot.htmlToImage"),
+		micro.Name("instagram.bot.htmltoimage"),
 		micro.Version("latest"),
 	)
 	service.Init()

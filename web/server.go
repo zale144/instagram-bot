@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"context"
 	"flag"
 	"fmt"
 	"html/template"
@@ -12,11 +13,11 @@ import (
 	"os/exec"
 	"strings"
 
-	"github.com/zale144/instagram-bot/web/clients"
 	"github.com/zale144/instagram-bot/web/model"
 	"github.com/zale144/instagram-bot/web/resource"
 
-	session "github.com/zale144/instagram-bot/sessions/proto"
+	microclient "github.com/micro/go-micro/client"
+	sess "github.com/zale144/instagram-bot/sessions/proto"
 
 	"github.com/dchest/authcookie"
 	"github.com/labstack/echo"
@@ -31,14 +32,11 @@ var (
 func main() {
 	model.Port = "4040"
 	model.AppURL = "http://localhost:" + model.Port
-	go clients.RegisterSessionClient()
-	go clients.RegisterHtmlToImageClient()
 
-	var err error
 	flag.Parse()
 
 	model.DBInfo = *dbInfo
-	err = model.InitDB()
+	err := model.InitDB()
 	if err != nil {
 		log.Fatalf("cannot initialize db: %v", err)
 		return
@@ -125,8 +123,8 @@ func authMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 			if login == "" {
 				return c.Redirect(http.StatusTemporaryRedirect, "/login")
 			}
-			client := *clients.SessClient
-			rsp, err := client.Get(*clients.SessCtx, &session.SessionRequest{
+			client := sess.NewSessionService("instagram.bot.session", microclient.DefaultClient)
+			rsp, err := client.Get(context.Background(), &sess.SessionRequest{
 				Account: login,
 			})
 			if err != nil || rsp.Error != "" {

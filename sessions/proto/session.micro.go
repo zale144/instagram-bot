@@ -2,7 +2,7 @@
 // source: session.proto
 
 /*
-Package sessions_proto is a generated protocol buffer package.
+Package instagram_bot_session is a generated protocol buffer package.
 
 It is generated from these files:
 	session.proto
@@ -17,16 +17,17 @@ It has these top-level messages:
 	MessageRequest
 	MessageResponse
 */
-package sessions_proto
+package instagram_bot_session
 
 import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
 import math "math"
 
 import (
+	context "context"
+
 	client "github.com/micro/go-micro/client"
 	server "github.com/micro/go-micro/server"
-	context "context"
 )
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -65,7 +66,7 @@ func NewSessionService(name string, c client.Client) SessionService {
 		c = client.NewClient()
 	}
 	if len(name) == 0 {
-		name = "sessions.proto"
+		name = "instagram.bot.session"
 	}
 	return &sessionService{
 		c:    c,

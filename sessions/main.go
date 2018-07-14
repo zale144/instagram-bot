@@ -13,14 +13,16 @@ import (
 func main() {
 	go session.Sessions()
 
-	service := micro.NewService(
-		micro.Name("instagram-bot.session"),
+	srv := micro.NewService(
+		micro.Name("instagram.bot.session"),
 		micro.Version("latest"),
 	)
-	service.Init()
-	proto.RegisterSessionHandler(service.Server(), new(handlers.Session))
 
-	if err := service.Run(); err != nil {
+	srv.Init()
+
+	proto.RegisterSessionHandler(srv.Server(), &handlers.Session{})
+
+	if err := srv.Run(); err != nil {
 		log.Fatal(err)
 	}
 

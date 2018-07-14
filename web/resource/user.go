@@ -1,6 +1,7 @@
 package resource
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"log"
@@ -8,12 +9,12 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/zale144/instagram-bot/web/clients"
 	"github.com/zale144/instagram-bot/web/model"
 	"github.com/zale144/instagram-bot/web/storage"
 
+	microclient "github.com/micro/go-micro/client"
 	htmlToImage "github.com/zale144/instagram-bot/htmlToimage/proto"
-	session "github.com/zale144/instagram-bot/sessions/proto"
+	sess "github.com/zale144/instagram-bot/sessions/proto"
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/labstack/echo"
@@ -29,8 +30,8 @@ func (ur UserResource) GetAllFollowed(c echo.Context) error {
 	username := claims.Name
 
 	// get all followed users
-	client := *clients.SessClient
-	rsp, err := client.FollowedUsers(*clients.SessCtx, &session.SessionRequest{
+	sClient := sess.NewSessionService("instagram.bot.session", microclient.DefaultClient)
+	rsp, err := sClient.FollowedUsers(context.Background(), &sess.SessionRequest{
 		Account: username,
 	})
 	if err != nil {
@@ -45,8 +46,8 @@ func (ur UserResource) GetProfile(c echo.Context) error {
 	username := c.Param("account")
 	// get the session struct from the cache
 
-	client := *clients.SessClient
-	resp, err := client.UserInfo(*clients.SessCtx, &session.UserReq{
+	sClient := sess.NewSessionService("instagram.bot.session", microclient.DefaultClient)
+	resp, err := sClient.UserInfo(context.Background(), &sess.UserReq{
 		Account:  username,
 		Username: c.Param("user"),
 	})
@@ -221,7 +222,7 @@ func (ur UserResource) Process(params map[string]string) (string, error) {
 	url := model.AppURL + "/user-info/" + params["account"] + "/" + params["username"]
 
 	fmt.Println("user info at url: ", url)
-
+	fmt.Println(params["username"])
 	options := htmlToImage.ImageRequest{
 		Input:  url,
 		Format: "jpg",
@@ -240,8 +241,8 @@ func (ur UserResource) Process(params map[string]string) (string, error) {
 	if err == nil {
 		options.Zoom = float32(zoom)
 	}
-	hClient := *clients.HtmlClient
-	hRsp, err := hClient.Process(*clients.HtmlCtx, &options)
+	hClient := htmlToImage.NewHtmlToImageService("instagram.bot.htmltoimage", microclient.DefaultClient)
+	hRsp, err := hClient.Process(context.Background(), &options)
 
 	path := "public/static/image/profiles/" + options.Name + ".jpg"
 	f, err := os.Create(path)
@@ -261,8 +262,8 @@ func (ur UserResource) Process(params map[string]string) (string, error) {
 	}
 	message := model.AppURL + "/calling-card/" + params["username"]
 
-	sClient := *clients.SessClient
-	sRsp, err := sClient.Message(*clients.SessCtx, &session.MessageRequest{
+	sClient := sess.NewSessionService("instagram.bot.session", microclient.DefaultClient)
+	sRsp, err := sClient.Message(context.TODO(), &sess.MessageRequest{
 		Sender:    params["account"],
 		Recipient: params["username"],
 		Title:     params["title"],

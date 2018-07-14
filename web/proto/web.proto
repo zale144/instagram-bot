@@ -1,0 +1,38 @@
+syntax = "proto3";
+
+package instagram.bot.web;
+
+service Web {
+    rpc Job(JobReq) returns (JobResp) {}
+	rpc User(UserReq) returns (UserResp) {}
+}
+
+message JobReq {
+	string hashtag = 1;
+}
+
+message JobResp {
+    int64 id = 1;
+	string hashtag = 2;
+}
+
+message Users {
+	repeated User users = 1;
+}
+
+message UserReq {
+	string Username = 1;
+}
+
+message UserResp {
+	User user = 1;
+}
+
+message User {
+	string Username	= 1;
+	string FullName = 2;  
+	string Description = 3; 
+	int64  FollowerCount = 4;
+	string ProfilePicUrl = 5;
+	string FeaturedPicUrl = 6;
+}

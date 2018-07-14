@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package sessions.proto;
+package instagram.bot.session;
 
 service Session {
 	rpc Get(SessionRequest) returns (SessionResponse) {}
