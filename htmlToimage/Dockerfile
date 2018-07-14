@@ -10,15 +10,22 @@ RUN apt-get update \
     && mkdir -p $HOME/go \
     && export GOPATH=$HOME/go \
     && export PATH=$PATH:/usr/local/go/bin:$HOME/go/bin \
-    && cp go get github.com/zale144/instagram-bot/htmlToimage \
+    && set -x \
+    && go get github.com/zale144/instagram-bot/htmlToimage \
+	&& go get github.com/golang/dep/cmd/dep \
     && cd $GOPATH/src/github.com/zale144/instagram-bot/htmlToimage \
+	&& which dep \
+    && date \
+	&& dep ensure -v \
+	&& echo "vendor:" \
+	&& dep status \
     && go build \
     && mkdir -p /app \
-    && cp htmlToimage /app \
-    && rm -rf /tmp/go/* \
-    && rm -rf /usr/local/go \
-    && rm -rf $GOPATH \
-    && apt-get purge -y --auto-remove git wget
+    && cp htmlToimage /app 
+   # && rm -rf /tmp/go/* \
+   # && rm -rf /usr/local/go \
+   # && rm -rf $GOPATH \
+   # && apt-get purge -y --auto-remove git wget
 
 WORKDIR /app
 #WORKDIR /go/src/github.com/zale144/instagram-bot/htmlToimage

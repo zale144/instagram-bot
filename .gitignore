@@ -1,11 +1,13 @@
 .vscode
 .idea
-web/vendor
 htmlToimage/vendor
-sessions/vendor
-sessions/debug
 htmlToimage/debug
 htmlToimage/htmlToimage
+#htmlToimage/wkhtmltoimage
+#htmlToimage/wkhtmltoimage.exe
+sessions/debug
+sessions/vendor
 sessions/zale144
 web/web
+web/vendor
 web/debug

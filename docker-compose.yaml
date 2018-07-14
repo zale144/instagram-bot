@@ -24,7 +24,7 @@ services:
       MICRO_REGISTRY: "consul"
       MICRO_REGISTRY_ADDRESS: "consul"
       DEBUG: 1
-    entrypoint: ./htmltoimage
+    entrypoint: ./htmlToimage
 
   sessions:
     image: instagram-bot/sessions
