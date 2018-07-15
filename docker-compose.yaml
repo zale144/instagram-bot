@@ -13,7 +13,7 @@ services:
       DEBUG: 1
     ports:
     - 4040:4040
-    entrypoint: ./instagram-bot.web http://localhost:4040
+    entrypoint: ./instagram-bot.web # http://localhost:4040
 
   htmlToimage:
     image: instagram-bot/htmltoimage

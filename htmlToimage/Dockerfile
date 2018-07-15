@@ -21,11 +21,11 @@ RUN apt-get update \
 	&& dep status \
     && go build \
     && mkdir -p /app \
-    && cp htmlToimage /app 
-   # && rm -rf /tmp/go/* \
-   # && rm -rf /usr/local/go \
-   # && rm -rf $GOPATH \
-   # && apt-get purge -y --auto-remove git wget
+    && cp htmlToimage /app \
+    && rm -rf /tmp/go/* \
+    && rm -rf /usr/local/go \
+    && rm -rf $GOPATH \
+    && apt-get purge -y --auto-remove git wget
 
 WORKDIR /app
 #WORKDIR /go/src/github.com/zale144/instagram-bot/htmlToimage

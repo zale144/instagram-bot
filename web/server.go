@@ -31,6 +31,7 @@ var (
 )
 
 func main() {
+
 	model.Port = "4040"
 	model.AppURL = "http://localhost:" + model.Port
 
@@ -51,10 +52,10 @@ func main() {
 		}
 		model.AppURL = URL
 	} else {
-		go setTunnelURL()
+		go setTunnelURL("hostname", "-i")
 
-		out := <-outCh
-		model.AppURL = strings.Split(out, ": ")[1]
+		model.AppURL = "http://" + <-outCh + ":" + model.Port
+		fmt.Println(model.AppURL)
 	}
 
 	fmt.Println("app url: ", model.AppURL)
@@ -150,8 +151,9 @@ func (t *Template) Render(w io.Writer, name string, data interface{}, c echo.Con
 	return t.templates.ExecuteTemplate(w, name, data)
 }
 
-func setTunnelURL() {
-	cmd := exec.Command("lt", "--port", model.Port)
+func setTunnelURL(name string, args ...string) {
+	//cmd := exec.Command("lt", "--port", model.Port)
+	cmd := exec.Command(name, args...)
 	// create a pipe for the output of the script
 	cmdReader, err := cmd.StdoutPipe()
 	if err != nil {

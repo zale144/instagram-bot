@@ -3,8 +3,6 @@
 htmlToimage/vendor
 htmlToimage/debug
 htmlToimage/htmlToimage
-#htmlToimage/wkhtmltoimage
-#htmlToimage/wkhtmltoimage.exe
 sessions/debug
 sessions/vendor
 sessions/zale144

@@ -242,7 +242,7 @@ func (ur UserResource) Process(params map[string]string) (string, error) {
 		options.Zoom = float32(zoom)
 	}
 	hClient := htmlToImage.NewHtmlToImageService("instagram.bot.htmltoimage", handlers.Srv.Client())
-	hRsp, err := hClient.Process(context.Background(), &options)
+	hRsp, err := hClient.Process(context.TODO(), &options)
 
 	path := "public/static/image/profiles/" + options.Name + ".jpg"
 	f, err := os.Create(path)

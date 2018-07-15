@@ -9,8 +9,7 @@ COPY . .
 #RUN set -x && \
 #	go get github.com/golang/dep/cmd/dep && \
 #	which dep && \
-#	date
-#RUN set -x && \
+#    date && \
 #	dep ensure -v && \
 #	echo "vendor:" && \
 #	dep status
