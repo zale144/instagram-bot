@@ -2,7 +2,7 @@
 // source: htmlToimage.proto
 
 /*
-Package instagram_bot_htmltoimage is a generated protocol buffer package.
+Package htmltoimage is a generated protocol buffer package.
 
 It is generated from these files:
 	htmlToimage.proto
@@ -11,7 +11,7 @@ It has these top-level messages:
 	ImageRequest
 	ImageResponse
 */
-package instagram_bot_htmltoimage
+package htmltoimage
 
 import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
@@ -55,7 +55,7 @@ func NewHtmlToImageService(name string, c client.Client) HtmlToImageService {
 		c = client.NewClient()
 	}
 	if len(name) == 0 {
-		name = "instagram.bot.htmltoimage"
+		name = "htmltoimage"
 	}
 	return &htmlToImageService{
 		c:    c,

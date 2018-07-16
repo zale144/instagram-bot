@@ -5,22 +5,23 @@ import (
 
 	"github.com/zale144/instagram-bot/sessions/handlers"
 	proto "github.com/zale144/instagram-bot/sessions/proto"
-	"github.com/zale144/instagram-bot/sessions/session"
+	"github.com/zale144/instagram-bot/sessions/service"
 
 	micro "github.com/micro/go-micro"
 )
 
 func main() {
-	go session.Sessions()
+	// start the Sessions cache management
+	go service.Sessions()
 
 	srv := micro.NewService(
-		micro.Name("instagram.bot.session"),
+		micro.Name("session"),
 		micro.Version("latest"),
 	)
-
 	srv.Init()
 
-	proto.RegisterSessionHandler(srv.Server(), &handlers.Service{})
+	proto.RegisterSessionHandler(srv.Server(), &handlers.Session{})
+	proto.RegisterInstaHandler(srv.Server(), &handlers.Insta{})
 
 	if err := srv.Run(); err != nil {
 		log.Fatal(err)

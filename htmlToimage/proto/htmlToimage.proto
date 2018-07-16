@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package instagram.bot.htmltoimage;
+package htmltoimage;
 
 service HtmlToImage {
     rpc Process(ImageRequest) returns (stream ImageResponse) {}

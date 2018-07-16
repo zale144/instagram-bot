@@ -2,7 +2,7 @@
 // source: session.proto
 
 /*
-Package instagram_bot_session is a generated protocol buffer package.
+Package session is a generated protocol buffer package.
 
 It is generated from these files:
 	session.proto
@@ -17,17 +17,16 @@ It has these top-level messages:
 	MessageRequest
 	MessageResponse
 */
-package instagram_bot_session
+package session
 
 import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
 import math "math"
 
 import (
-	context "context"
-
 	client "github.com/micro/go-micro/client"
 	server "github.com/micro/go-micro/server"
+	context "context"
 )
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -51,9 +50,6 @@ var _ server.Option
 type SessionService interface {
 	Get(ctx context.Context, in *SessionRequest, opts ...client.CallOption) (*SessionResponse, error)
 	Remove(ctx context.Context, in *SessionRequest, opts ...client.CallOption) (*SessionResponse, error)
-	Message(ctx context.Context, in *MessageRequest, opts ...client.CallOption) (*MessageResponse, error)
-	FollowedUsers(ctx context.Context, in *SessionRequest, opts ...client.CallOption) (*Users, error)
-	UserInfo(ctx context.Context, in *UserReq, opts ...client.CallOption) (*UserResp, error)
 }
 
 type sessionService struct {
@@ -66,7 +62,7 @@ func NewSessionService(name string, c client.Client) SessionService {
 		c = client.NewClient()
 	}
 	if len(name) == 0 {
-		name = "instagram.bot.session"
+		name = "session"
 	}
 	return &sessionService{
 		c:    c,
@@ -94,53 +90,17 @@ func (c *sessionService) Remove(ctx context.Context, in *SessionRequest, opts ..
 	return out, nil
 }
 
-func (c *sessionService) Message(ctx context.Context, in *MessageRequest, opts ...client.CallOption) (*MessageResponse, error) {
-	req := c.c.NewRequest(c.name, "Session.Message", in)
-	out := new(MessageResponse)
-	err := c.c.Call(ctx, req, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *sessionService) FollowedUsers(ctx context.Context, in *SessionRequest, opts ...client.CallOption) (*Users, error) {
-	req := c.c.NewRequest(c.name, "Session.FollowedUsers", in)
-	out := new(Users)
-	err := c.c.Call(ctx, req, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *sessionService) UserInfo(ctx context.Context, in *UserReq, opts ...client.CallOption) (*UserResp, error) {
-	req := c.c.NewRequest(c.name, "Session.UserInfo", in)
-	out := new(UserResp)
-	err := c.c.Call(ctx, req, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 // Server API for Session service
 
 type SessionHandler interface {
 	Get(context.Context, *SessionRequest, *SessionResponse) error
 	Remove(context.Context, *SessionRequest, *SessionResponse) error
-	Message(context.Context, *MessageRequest, *MessageResponse) error
-	FollowedUsers(context.Context, *SessionRequest, *Users) error
-	UserInfo(context.Context, *UserReq, *UserResp) error
 }
 
 func RegisterSessionHandler(s server.Server, hdlr SessionHandler, opts ...server.HandlerOption) {
 	type session interface {
 		Get(ctx context.Context, in *SessionRequest, out *SessionResponse) error
 		Remove(ctx context.Context, in *SessionRequest, out *SessionResponse) error
-		Message(ctx context.Context, in *MessageRequest, out *MessageResponse) error
-		FollowedUsers(ctx context.Context, in *SessionRequest, out *Users) error
-		UserInfo(ctx context.Context, in *UserReq, out *UserResp) error
 	}
 	type Session struct {
 		session
@@ -161,14 +121,95 @@ func (h *sessionHandler) Remove(ctx context.Context, in *SessionRequest, out *Se
 	return h.SessionHandler.Remove(ctx, in, out)
 }
 
-func (h *sessionHandler) Message(ctx context.Context, in *MessageRequest, out *MessageResponse) error {
-	return h.SessionHandler.Message(ctx, in, out)
+// Client API for Insta service
+
+type InstaService interface {
+	Message(ctx context.Context, in *MessageRequest, opts ...client.CallOption) (*MessageResponse, error)
+	FollowedUsers(ctx context.Context, in *UserReq, opts ...client.CallOption) (*Users, error)
+	UserInfo(ctx context.Context, in *UserReq, opts ...client.CallOption) (*UserResp, error)
 }
 
-func (h *sessionHandler) FollowedUsers(ctx context.Context, in *SessionRequest, out *Users) error {
-	return h.SessionHandler.FollowedUsers(ctx, in, out)
+type instaService struct {
+	c    client.Client
+	name string
 }
 
-func (h *sessionHandler) UserInfo(ctx context.Context, in *UserReq, out *UserResp) error {
-	return h.SessionHandler.UserInfo(ctx, in, out)
+func NewInstaService(name string, c client.Client) InstaService {
+	if c == nil {
+		c = client.NewClient()
+	}
+	if len(name) == 0 {
+		name = "session"
+	}
+	return &instaService{
+		c:    c,
+		name: name,
+	}
+}
+
+func (c *instaService) Message(ctx context.Context, in *MessageRequest, opts ...client.CallOption) (*MessageResponse, error) {
+	req := c.c.NewRequest(c.name, "Insta.Message", in)
+	out := new(MessageResponse)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *instaService) FollowedUsers(ctx context.Context, in *UserReq, opts ...client.CallOption) (*Users, error) {
+	req := c.c.NewRequest(c.name, "Insta.FollowedUsers", in)
+	out := new(Users)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *instaService) UserInfo(ctx context.Context, in *UserReq, opts ...client.CallOption) (*UserResp, error) {
+	req := c.c.NewRequest(c.name, "Insta.UserInfo", in)
+	out := new(UserResp)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// Server API for Insta service
+
+type InstaHandler interface {
+	Message(context.Context, *MessageRequest, *MessageResponse) error
+	FollowedUsers(context.Context, *UserReq, *Users) error
+	UserInfo(context.Context, *UserReq, *UserResp) error
+}
+
+func RegisterInstaHandler(s server.Server, hdlr InstaHandler, opts ...server.HandlerOption) {
+	type insta interface {
+		Message(ctx context.Context, in *MessageRequest, out *MessageResponse) error
+		FollowedUsers(ctx context.Context, in *UserReq, out *Users) error
+		UserInfo(ctx context.Context, in *UserReq, out *UserResp) error
+	}
+	type Insta struct {
+		insta
+	}
+	h := &instaHandler{hdlr}
+	s.Handle(s.NewHandler(&Insta{h}, opts...))
+}
+
+type instaHandler struct {
+	InstaHandler
+}
+
+func (h *instaHandler) Message(ctx context.Context, in *MessageRequest, out *MessageResponse) error {
+	return h.InstaHandler.Message(ctx, in, out)
+}
+
+func (h *instaHandler) FollowedUsers(ctx context.Context, in *UserReq, out *Users) error {
+	return h.InstaHandler.FollowedUsers(ctx, in, out)
+}
+
+func (h *instaHandler) UserInfo(ctx context.Context, in *UserReq, out *UserResp) error {
+	return h.InstaHandler.UserInfo(ctx, in, out)
 }

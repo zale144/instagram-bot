@@ -2,20 +2,14 @@
 // source: web.proto
 
 /*
-Package instagram_bot_web is a generated protocol buffer package.
+Package web is a generated protocol buffer package.
 
 It is generated from these files:
 	web.proto
 
 It has these top-level messages:
-	JobReq
-	JobResp
-	Users
-	UserReq
-	UserResp
-	User
 */
-package instagram_bot_web
+package web
 
 import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
@@ -46,8 +40,6 @@ var _ server.Option
 // Client API for Web service
 
 type WebService interface {
-	Job(ctx context.Context, in *JobReq, opts ...client.CallOption) (*JobResp, error)
-	User(ctx context.Context, in *UserReq, opts ...client.CallOption) (*UserResp, error)
 }
 
 type webService struct {
@@ -60,7 +52,7 @@ func NewWebService(name string, c client.Client) WebService {
 		c = client.NewClient()
 	}
 	if len(name) == 0 {
-		name = "instagram.bot.web"
+		name = "web"
 	}
 	return &webService{
 		c:    c,
@@ -68,37 +60,13 @@ func NewWebService(name string, c client.Client) WebService {
 	}
 }
 
-func (c *webService) Job(ctx context.Context, in *JobReq, opts ...client.CallOption) (*JobResp, error) {
-	req := c.c.NewRequest(c.name, "Web.Job", in)
-	out := new(JobResp)
-	err := c.c.Call(ctx, req, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *webService) User(ctx context.Context, in *UserReq, opts ...client.CallOption) (*UserResp, error) {
-	req := c.c.NewRequest(c.name, "Web.User", in)
-	out := new(UserResp)
-	err := c.c.Call(ctx, req, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 // Server API for Web service
 
 type WebHandler interface {
-	Job(context.Context, *JobReq, *JobResp) error
-	User(context.Context, *UserReq, *UserResp) error
 }
 
 func RegisterWebHandler(s server.Server, hdlr WebHandler, opts ...server.HandlerOption) {
 	type web interface {
-		Job(ctx context.Context, in *JobReq, out *JobResp) error
-		User(ctx context.Context, in *UserReq, out *UserResp) error
 	}
 	type Web struct {
 		web
@@ -109,12 +77,4 @@ func RegisterWebHandler(s server.Server, hdlr WebHandler, opts ...server.Handler
 
 type webHandler struct {
 	WebHandler
-}
-
-func (h *webHandler) Job(ctx context.Context, in *JobReq, out *JobResp) error {
-	return h.WebHandler.Job(ctx, in, out)
-}
-
-func (h *webHandler) User(ctx context.Context, in *UserReq, out *UserResp) error {
-	return h.WebHandler.User(ctx, in, out)
 }

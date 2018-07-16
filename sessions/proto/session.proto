@@ -1,12 +1,15 @@
 syntax = "proto3";
 
-package instagram.bot.session;
+package session;
 
 service Session {
 	rpc Get(SessionRequest) returns (SessionResponse) {}
 	rpc Remove(SessionRequest) returns (SessionResponse) {}
+}
+
+service Insta {
 	rpc Message(MessageRequest) returns (MessageResponse) {}
-	rpc FollowedUsers(SessionRequest) returns (Users) {}
+	rpc FollowedUsers(UserReq) returns (Users) {}
 	rpc UserInfo(UserReq) returns (UserResp) {}
 }
 

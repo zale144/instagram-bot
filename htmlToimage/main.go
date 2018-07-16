@@ -3,16 +3,14 @@ package main
 import (
 	"log"
 
-	"github.com/zale144/instagram-bot/htmlToimage/handlers"
-
-	proto "github.com/zale144/instagram-bot/htmlToimage/proto"
-
 	micro "github.com/micro/go-micro"
+	"github.com/zale144/instagram-bot/htmlToimage/handlers"
+	proto "github.com/zale144/instagram-bot/htmlToimage/proto"
 )
 
 func main() {
 	service := micro.NewService(
-		micro.Name("instagram.bot.htmltoimage"),
+		micro.Name("htmltoimage"),
 		micro.Version("latest"),
 	)
 	service.Init()

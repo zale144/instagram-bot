@@ -1,0 +1,50 @@
+syntax = "proto3";
+
+package api;
+
+service Api {
+    rpc Job(JobReq) returns (JobResp) {}
+	rpc User(UserReq) returns (UserResp) {}
+}
+
+service LoginService {
+	rpc Login(LoginReq) returns (LoginResp) {}
+}
+
+message LoginReq {
+	string username = 1;
+}
+
+message LoginResp {
+	string token = 1;
+}
+
+message JobReq {
+	string hashtag = 1;
+}
+
+message JobResp {
+    int64 id = 1;
+	string hashtag = 2;
+}
+
+message Users {
+	repeated User users = 1;
+}
+
+message UserReq {
+	string Username = 1;
+}
+
+message UserResp {
+	User user = 1;
+}
+
+message User {
+	string Username	= 1;
+	string FullName = 2;  
+	string Description = 3; 
+	int64  FollowerCount = 4;
+	string ProfilePicUrl = 5;
+	string FeaturedPicUrl = 6;
+}

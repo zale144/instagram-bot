@@ -1,5 +1,6 @@
 const {Table, Tabs, Tab, Modal, Button} = ReactBootstrap;
 let token = localStorage.getItem('access_token');
+const baseUrl = "http://localhost:4041";
 window.globalReactFunctions = {};
 
 class App extends React.Component {
@@ -23,7 +24,7 @@ class App extends React.Component {
     }
 
     loadFollowed() {
-        fetch('/api/followed', {
+        fetch(baseUrl + '/api/followed', {
             method: 'GET',
             headers: new Headers({
                 'Authorization': 'Bearer '+ token,
@@ -43,7 +44,7 @@ class App extends React.Component {
     }
 
     loadJobs() {
-        fetch('/api/jobs', {
+        fetch(baseUrl + '/api/jobs', {
             method: 'GET',
             headers: new Headers({
                 'Authorization': 'Bearer '+ token,
@@ -70,7 +71,7 @@ class App extends React.Component {
             }))
         });
 
-        fetch('/api/process/' + user + '?zoom=0.4&height=430&width=300&title=Register%20at%20Cabani', {
+        fetch(baseUrl + '/api/process/' + user + '?zoom=0.4&height=430&width=300&title=Register%20at%20Cabani', {
             method: 'GET',
             headers: new Headers({
                 'Authorization': 'Bearer '+ token,
@@ -120,7 +121,7 @@ class App extends React.Component {
             alert('Search query cannot be empty');
             return;
         }
-        fetch('/api/search/' + username, {
+        fetch(baseUrl + '/api/search/' + username, {
             method: 'GET',
             headers: new Headers({
                 'Authorization': 'Bearer '+ token,
@@ -142,7 +143,7 @@ class App extends React.Component {
             isSending: true
         });
         const search = document.getElementById('search');
-        fetch('/api/follow/' + search.value, {
+        fetch(baseUrl + '/api/follow/' + search.value, {
             method: 'GET',
             headers: new Headers({
                 'Authorization': 'Bearer '+ token,
@@ -229,7 +230,7 @@ class NewJob extends React.Component {
             alert('title cannot be empty');
             return;
         }
-        fetch('/api/process-by-hashtag/' + hashtag + '?limit=' + limit + '&zoom=0.4&height=430&width=300&title=' + title, {
+        fetch(baseUrl + '/api/process-by-hashtag/' + hashtag + '?limit=' + limit + '&zoom=0.4&height=430&width=300&title=' + title, {
             method: 'GET',
             headers: new Headers({
                 'Authorization': 'Bearer '+ token,
@@ -415,7 +416,7 @@ class Processed extends React.Component {
             loading: true
         });
         const url = this.props.job?`/api/processed-by-job/${this.props.job.ID}/${this.state.page}`:`/api/processed/${this.state.page}`;
-        fetch(url, {
+        fetch(baseUrl + url, {
             method: 'GET',
             headers: new Headers({
                 'Authorization': 'Bearer '+ token,

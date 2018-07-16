@@ -17,6 +17,8 @@ COPY . .
 
 RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o instagram-bot.web .
 
+# 
+
 # second stage
 #FROM scratch
 
