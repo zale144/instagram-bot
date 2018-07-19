@@ -38,7 +38,7 @@ func (ur UserService) CallingCard(c echo.Context) error {
 
 	data := map[string]interface{}{
 		"Username": c.Param("user"),
-		"WebUrl":   model.ApiURL,
+		"ApiURL":   model.ApiURL,
 	}
 	return c.Render(http.StatusOK, "calling-card", data)
 }

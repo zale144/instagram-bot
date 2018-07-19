@@ -1,6 +1,7 @@
 const {Table, Tabs, Tab, Modal, Button} = ReactBootstrap;
 let token = localStorage.getItem('access_token');
-let baseUrl;
+let webURL;
+let apiURL;
 window.globalReactFunctions = {};
 
 class App extends React.Component {
@@ -24,7 +25,7 @@ class App extends React.Component {
     }
 
     loadFollowed() {
-        fetch(baseUrl + '/api/followed', {
+        fetch(apiURL + '/api/followed', {
             method: 'GET',
             headers: new Headers({
                 'Authorization': 'Bearer '+ token,
@@ -44,7 +45,7 @@ class App extends React.Component {
     }
 
     loadJobs() {
-        fetch(baseUrl + '/api/jobs', {
+        fetch(apiURL + '/api/jobs', {
             method: 'GET',
             headers: new Headers({
                 'Authorization': 'Bearer '+ token,
@@ -71,7 +72,7 @@ class App extends React.Component {
             }))
         });
 
-        fetch(baseUrl + '/api/process/' + user + '?hostname='+baseUrl+'&crop-h=340&crop-w=270&height=360&width=300&title=Register%20at%20My-Site', {
+        fetch(apiURL + '/api/process/' + user + '?hostname='+webURL+'&crop-h=340&crop-w=270&height=360&width=300&title=Register%20at%20My-Site', {
             method: 'GET',
             headers: new Headers({
                 'Authorization': 'Bearer '+ token,
@@ -121,7 +122,7 @@ class App extends React.Component {
             alert('Search query cannot be empty');
             return;
         }
-        fetch(baseUrl + '/api/search/' + username, {
+        fetch(apiURL + '/api/search/' + username, {
             method: 'GET',
             headers: new Headers({
                 'Authorization': 'Bearer '+ token,
@@ -143,7 +144,7 @@ class App extends React.Component {
             isSending: true
         });
         const search = document.getElementById('search');
-        fetch(baseUrl + '/api/follow/' + search.value, {
+        fetch(apiURL + '/api/follow/' + search.value, {
             method: 'GET',
             headers: new Headers({
                 'Authorization': 'Bearer '+ token,
@@ -163,7 +164,8 @@ class App extends React.Component {
     }
 
     componentDidMount() {
-        baseUrl = document.getElementById('host').value;
+        webURL = document.getElementById('web').value;
+        apiURL = document.getElementById('api').value;
         this.loadFollowed();
     }
 
@@ -231,7 +233,7 @@ class NewJob extends React.Component {
             alert('title cannot be empty');
             return;
         }
-        fetch(baseUrl + '/api/process-by-hashtag/' + hashtag + '?limit=' + limit + '&hostname='+baseUrl+'&crop-h=340&crop-w=270&height=360&width=300&title=' + title, {
+        fetch(apiURL + '/api/process-by-hashtag/' + hashtag + '?limit=' + limit + '&hostname='+webURL+'&crop-h=340&crop-w=270&height=360&width=300&title=' + title, {
             method: 'GET',
             headers: new Headers({
                 'Authorization': 'Bearer '+ token,
@@ -417,7 +419,7 @@ class Processed extends React.Component {
             loading: true
         });
         const url = this.props.job?`/api/processed-by-job/${this.props.job.ID}/${this.state.page}`:`/api/processed/${this.state.page}`;
-        fetch(baseUrl + url, {
+        fetch(apiURL + url, {
             method: 'GET',
             headers: new Headers({
                 'Authorization': 'Bearer '+ token,

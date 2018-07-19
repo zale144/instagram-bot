@@ -56,6 +56,12 @@ services:
       DEBUG: 1
     entrypoint: ./instagram-bot.sessions
 
+  facedetect:
+    image: instagram-bot/facedetect
+    build: ./faceDetect
+    depends_on:
+    - consul
+
   consul:
     image: consul:latest
     command: agent -server -bootstrap-expect=1 -log-level=warn -ui -client=0.0.0.0

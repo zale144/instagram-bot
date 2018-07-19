@@ -11,6 +11,9 @@ import (
 	"github.com/zale144/goinsta"
 	"github.com/zale144/instagram-bot/sessions/model"
 	proto "github.com/zale144/instagram-bot/sessions/proto"
+	"os/exec"
+	"strconv"
+	"strings"
 )
 
 // GetAllFollowedUsers will retrieve all followed Instagram users
@@ -202,17 +205,33 @@ func GetImageWithMostLikes(images []*model.Media) (*model.Media, error) {
 		mostLiked = images[0]
 
 		for _, img := range images {
+			p, err := IsPerson(img.URL)
+			if err != nil {
+				log.Println(err)
+			}
+			fmt.Println("FOR URL: ", img.URL)
+			fmt.Printf("Found %v persons\n", p)
 			if img.IsLandscape {
 				mostLiked = img
-				// TODO - user TensorFlow Inception as a service to check if
-				// it's a picture of a person
-				if img.IsPicOfUser {
+				if img.IsPicOfUser || p > 0 {
 					break
 				}
 			}
 		}
 	}
 	return mostLiked, nil
+}
+
+// IsPerson runs a Dockerized python script using a machine perception
+// algorithm to check whether it's a picture of a person
+func IsPerson(input string) (int, error) {
+	com := "docker run --rm facedetect " + input
+	out, _ := exec.Command("/bin/sh", "-c", com).Output()
+	n, err := strconv.Atoi(strings.TrimSuffix(string(out), "\n"))
+	if err != nil {
+		return 0, err
+	}
+	return n, nil
 }
 
 func ConvertUser(user *goinsta.User) (p proto.User) {

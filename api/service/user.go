@@ -159,7 +159,7 @@ func (ur UserService) ProcessUsersByHashtag(c echo.Context) error {
 
 			user := model.ProcessedUser{Username: params["username"], Job: job, JobID: job.ID, ProcessedAt: time.Now().Unix()}
 
-			//_, err = ur.Process(params)
+			_, err = ur.Process(params)
 			user.Successful = err == nil
 			storage.ProcessedUserStorage{}.Insert(user)
 			fmt.Printf("processed: %s\n", u.Username)
@@ -229,7 +229,7 @@ func (ur UserService) Process(params map[string]string) (string, error) {
 		return "", err
 	}
 	message := model.WebUrl + "/calling-card/" + params["username"]
-	mReq := &sess.MessageRequest{
+	/*mReq := &sess.MessageRequest{
 		Sender:    params["account"],
 		Recipient: params["username"],
 		Title:     params["title"],
@@ -240,7 +240,7 @@ func (ur UserService) Process(params map[string]string) (string, error) {
 		fmt.Println(err)
 		return "", nil
 	}
-	fmt.Println(mRsp)
+	fmt.Println(mRsp)*/
 
 	return message, nil
 }

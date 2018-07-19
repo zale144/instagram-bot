@@ -78,7 +78,8 @@ func main() {
 	a.Use(authMiddleware)
 	a.GET("/home", func(c echo.Context) error {
 		data := map[string]interface{}{
-			"Hostname":   model.ApiURL,
+			"WebURL":   model.WebURL,
+			"ApiURL":   model.ApiURL,
 		}
 		return c.Render(http.StatusOK, "home", data)
 	})
