@@ -284,7 +284,7 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:a346e4b84e2433ffdc93da3750cf5a042fc4c617e34ce356870cdd624eec6742"
+  digest = "1:99a1bfdf0c488729af20eebeecb110f65a1e549dfe7ee000f1b33960a0811ba2"
   name = "github.com/zale144/instagram-bot"
   packages = [
     "htmlToimage/proto",
@@ -293,7 +293,7 @@
     "sessions/service",
   ]
   pruneopts = "UT"
-  revision = "babce8b833193221c24ee4495f11938c7bb2525d"
+  revision = "55a7dc88887273ac748041d62bbb16695a903f88"
 
 [[projects]]
   branch = "master"

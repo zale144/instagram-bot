@@ -17,7 +17,6 @@ import (
 	sess "github.com/zale144/instagram-bot/sessions/proto"
 	"strings"
 	"time"
-	"github.com/zale144/instagram-bot/sessions/service"
 )
 
 type UserService struct{}
