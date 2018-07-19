@@ -222,8 +222,8 @@ func GetImageWithMostLikes(images []*model.Media) (*model.Media, error) {
 	return mostLiked, nil
 }
 
-// IsPerson runs a Dockerized python script using a machine perception
-// algorithm to check whether it's a picture of a person
+// IsPerson runs a Dockerized python script with OpenCV that uses a
+// machine perception algorithm to check whether it's a picture of a person
 func IsPerson(input string) (int, error) {
 	com := "docker run --rm facedetect " + input
 	out, _ := exec.Command("/bin/sh", "-c", com).Output()
