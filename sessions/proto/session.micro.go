@@ -128,6 +128,7 @@ type InstaService interface {
 	FollowedUsers(ctx context.Context, in *UserReq, opts ...client.CallOption) (*Users, error)
 	UserInfo(ctx context.Context, in *UserReq, opts ...client.CallOption) (*UserResp, error)
 	UsersByHashtag(ctx context.Context, in *UserReq, opts ...client.CallOption) (*Users, error)
+	Follow(ctx context.Context, in *UserReq, opts ...client.CallOption) (*UserResp, error)
 }
 
 type instaService struct {
@@ -188,6 +189,16 @@ func (c *instaService) UsersByHashtag(ctx context.Context, in *UserReq, opts ...
 	return out, nil
 }
 
+func (c *instaService) Follow(ctx context.Context, in *UserReq, opts ...client.CallOption) (*UserResp, error) {
+	req := c.c.NewRequest(c.name, "Insta.Follow", in)
+	out := new(UserResp)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // Server API for Insta service
 
 type InstaHandler interface {
@@ -195,6 +206,7 @@ type InstaHandler interface {
 	FollowedUsers(context.Context, *UserReq, *Users) error
 	UserInfo(context.Context, *UserReq, *UserResp) error
 	UsersByHashtag(context.Context, *UserReq, *Users) error
+	Follow(context.Context, *UserReq, *UserResp) error
 }
 
 func RegisterInstaHandler(s server.Server, hdlr InstaHandler, opts ...server.HandlerOption) {
@@ -203,6 +215,7 @@ func RegisterInstaHandler(s server.Server, hdlr InstaHandler, opts ...server.Han
 		FollowedUsers(ctx context.Context, in *UserReq, out *Users) error
 		UserInfo(ctx context.Context, in *UserReq, out *UserResp) error
 		UsersByHashtag(ctx context.Context, in *UserReq, out *Users) error
+		Follow(ctx context.Context, in *UserReq, out *UserResp) error
 	}
 	type Insta struct {
 		insta
@@ -229,4 +242,8 @@ func (h *instaHandler) UserInfo(ctx context.Context, in *UserReq, out *UserResp)
 
 func (h *instaHandler) UsersByHashtag(ctx context.Context, in *UserReq, out *Users) error {
 	return h.InstaHandler.UsersByHashtag(ctx, in, out)
+}
+
+func (h *instaHandler) Follow(ctx context.Context, in *UserReq, out *UserResp) error {
+	return h.InstaHandler.Follow(ctx, in, out)
 }

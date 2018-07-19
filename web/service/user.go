@@ -19,8 +19,6 @@ func (ur UserService) GetProfile(c echo.Context) error {
 	details, err := client.Session{}.UserInfo(account, username)
 	if err != nil {
 		err := errors.New("cannot get user info")
-		// TODO use sessions for this
-		//AccountService{}.Logout(c)
 		c.Error(echo.NewHTTPError(http.StatusBadRequest, err.Error()))
 		return err
 	}
@@ -40,7 +38,7 @@ func (ur UserService) CallingCard(c echo.Context) error {
 
 	data := map[string]interface{}{
 		"Username": c.Param("user"),
-		"ApiURL":   model.ApiURL,
+		"WebUrl":   model.ApiURL,
 	}
 	return c.Render(http.StatusOK, "calling-card", data)
 }

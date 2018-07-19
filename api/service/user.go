@@ -17,6 +17,7 @@ import (
 	sess "github.com/zale144/instagram-bot/sessions/proto"
 	"strings"
 	"time"
+	"github.com/zale144/instagram-bot/sessions/service"
 )
 
 type UserService struct{}
@@ -117,64 +118,60 @@ func (ur UserService) ProcessUsersByHashtag(c echo.Context) error {
 	storage.JobStorage{}.Insert(&job)
 
 	go func() {
-		users := client.Session{}
 		processedUsers := []model.UserDetails{}
-		h := s.GetInsta().NewHashtag(params["hashtag"])
-		for h.Next() {
-			for i := range h.Sections {
-				for _, i := range h.Sections[i].LayoutContent.Medias {
-					if len(i.Item.Images.Versions) != 0 {
-						processedUser, err := storage.ProcessedUserStorage{}.GetByUsername(i.Item.User.Username)
-						if err != nil {
-							log.Println(err)
-							err = nil
-						}
-						if processedUser != nil {
-							err := errors.New("user already processed")
-							log.Println(err)
-							err = nil
-							continue
-						}
-						account = strings.Split(account, "@")[0]
-						if i.Item.User.Username == account {
-							err := errors.New("should not process the job issuer")
-							log.Println(err)
-							err = nil
-							continue
-						}
-						fmt.Printf("processing[ url: %s  - user: %s\n", i.Item.Images.Versions[0].URL, i.Item.User.Username)
-						details := model.UserDetails{
-							i.Item.User.Username,
-							i.Item.User.FullName,
-							i.Item.User.Biography,
-							i.Item.User.FollowerCount,
-							i.Item.User.ProfilePicURL,
-							"",
-						}
-						params["username"] = i.Item.User.Username
+		fmt.Println("GETTING USERS")
+		users, err := client.Session{}.UsersByHashtag(&sess.UserReq{
+			Account: account,
+			Hashtag: params["hashtag"],
+			Limit: int64(limit),
+		})
+		fmt.Printf("GOT %v USERS\n", len(users))
+		for _, u := range users {
+			fmt.Println(u.Username)
+		}
+		for _, u := range users {
+			processedUser, err := storage.ProcessedUserStorage{}.GetByUsername(u.Username)
+			if err != nil {
+				log.Println(err)
+				err = nil
+			}
+			if processedUser != nil {
+				err := errors.New("user already processed")
+				log.Println(err)
+				err = nil
+				continue
+			}
+			account = strings.Split(account, "@")[0]
+			if u.Username == account {
+				err := errors.New("should not process the job issuer")
+				log.Println(err)
+				err = nil
+				continue
+			}
+			details := model.UserDetails{
+				u.Username,
+				u.FullName,
+				u.Description,
+				int(u.FollowerCount),
+				u.ProfilePicUrl,
+				"",
+			}
+			params["username"] = u.Username
 
-						user := model.ProcessedUser{Username: params["username"], Job: job, JobID: job.ID, ProcessedAt: time.Now().Unix()}
+			user := model.ProcessedUser{Username: params["username"], Job: job, JobID: job.ID, ProcessedAt: time.Now().Unix()}
 
-						_, err = ur.Process(params)
-						if err != nil {
-							log.Println(err)
-							user.Successful = false
-						} else {
-							user.Successful = true
-						}
-						storage.ProcessedUserStorage{}.Insert(user)
-						fmt.Printf("processed: %s\n", i.Item.User.Username)
-						processedUsers = append(processedUsers, details)
-						if len(processedUsers) == limit {
-							goto end
-						}
-					}
-				}
+			//_, err = ur.Process(params)
+			user.Successful = err == nil
+			storage.ProcessedUserStorage{}.Insert(user)
+			fmt.Printf("processed: %s\n", u.Username)
+			processedUsers = append(processedUsers, details)
+			if len(processedUsers) == limit {
+				goto end
 			}
 		}
 	end:
 		fmt.Println("DONE")
-		err := storage.JobStorage{}.NewJobUpdater(job.ID).FinishedAt(time.Now().Unix()).Update(nil)
+		err = storage.JobStorage{}.NewJobUpdater(job.ID).FinishedAt(time.Now().Unix()).Update(nil)
 		if err != nil {
 			log.Println(err)
 			err = errors.New("error updating job")
@@ -232,7 +229,7 @@ func (ur UserService) Process(params map[string]string) (string, error) {
 		log.Println(err)
 		return "", err
 	}
-	message := model.AppURL + "/calling-card/" + params["username"]
+	message := model.WebUrl + "/calling-card/" + params["username"]
 	mReq := &sess.MessageRequest{
 		Sender:    params["account"],
 		Recipient: params["username"],
@@ -304,59 +301,42 @@ func (ur UserService) GetProcessedByJob(c echo.Context) error {
 	return c.JSON(http.StatusOK, users)
 }
 
-/* // search profile by username
+// search profile by username
 func (ur UserService) Search(c echo.Context) error {
 	user := c.Get("user").(*jwt.Token)
-	claims := user.Claims.(*JwtCustomClaims)
-	username := claims.Name
-	// get the session struct from the cache
-	s, err := session.GetSession(&model.Account{Username: username})
-	if err != nil {
+	claims := user.Claims.(*model.JwtCustomClaims)
+	account := claims.Name
+	username := c.Param("user")
+	if username == "" {
+		err := errors.New("username must be provided")
 		c.Error(echo.NewHTTPError(http.StatusBadRequest, err.Error()))
 		return err
 	}
-	// if there is no cached session, user should login again
-	if s == nil {
-		err := errors.New("session is expired")
-		AccountService{}.Logout(c)
-		c.Error(echo.NewHTTPError(http.StatusBadRequest, err.Error()))
-		return err
-	}
-	profile, err := s.GetUserByName(c.Param("user"))
+	profile, err := client.Session{}.UserInfo(account, username)
 	if err != nil {
-		err := errors.New("cannot get profile")
-		AccountService{}.Logout(c)
+		err := errors.New("cannot get user info")
 		c.Error(echo.NewHTTPError(http.StatusBadRequest, err.Error()))
 		return err
 	}
 	return c.JSON(http.StatusOK, profile)
-} */
+}
 
-/* // follow profile by username
+// follow profile by username
 func (ur UserService) Follow(c echo.Context) error {
 	user := c.Get("user").(*jwt.Token)
-	claims := user.Claims.(*JwtCustomClaims)
-	username := claims.Name
-	// get the session struct from the cache
-	s, err := session.GetSession(&model.Account{Username: username})
+	claims := user.Claims.(*model.JwtCustomClaims)
+	account := claims.Name
+	username := c.Param("user")
+	if username == "" {
+		err := errors.New("username must be provided")
+		c.Error(echo.NewHTTPError(http.StatusBadRequest, err.Error()))
+		return err
+	}
+	profile, err := client.Session{}.Follow(account, username)
 	if err != nil {
+		err := errors.New("error following user")
 		c.Error(echo.NewHTTPError(http.StatusBadRequest, err.Error()))
 		return err
 	}
-	// if there is no cached session, user should login again
-	if s == nil {
-		err := errors.New("session is expired")
-		AccountService{}.Logout(c)
-		c.Error(echo.NewHTTPError(http.StatusBadRequest, err.Error()))
-		return err
-	}
-	profile, err := s.GetUserByName(c.Param("user"))
-	if err != nil {
-		err := errors.New("cannot get profile")
-		AccountService{}.Logout(c)
-		c.Error(echo.NewHTTPError(http.StatusBadRequest, err.Error()))
-		return err
-	}
-	profile.Follow()
 	return c.JSON(http.StatusOK, profile)
-} */
+}

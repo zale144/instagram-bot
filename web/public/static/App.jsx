@@ -1,6 +1,6 @@
 const {Table, Tabs, Tab, Modal, Button} = ReactBootstrap;
 let token = localStorage.getItem('access_token');
-const baseUrl = "http://localhost:4041";
+let baseUrl;
 window.globalReactFunctions = {};
 
 class App extends React.Component {
@@ -71,7 +71,7 @@ class App extends React.Component {
             }))
         });
 
-        fetch(baseUrl + '/api/process/' + user + '?hostname='+hostname+'&crop-h=340&crop-w=270&height=360&width=300&title=Register%20at%20My-Site', {
+        fetch(baseUrl + '/api/process/' + user + '?hostname='+baseUrl+'&crop-h=340&crop-w=270&height=360&width=300&title=Register%20at%20My-Site', {
             method: 'GET',
             headers: new Headers({
                 'Authorization': 'Bearer '+ token,
@@ -163,6 +163,7 @@ class App extends React.Component {
     }
 
     componentDidMount() {
+        baseUrl = document.getElementById('host').value;
         this.loadFollowed();
     }
 
@@ -230,7 +231,7 @@ class NewJob extends React.Component {
             alert('title cannot be empty');
             return;
         }
-        fetch(baseUrl + '/api/process-by-hashtag/' + hashtag + '?limit=' + limit + '&hostname='+hostname+'&crop-h=340&crop-w=270&height=360&width=300&title=' + title, {
+        fetch(baseUrl + '/api/process-by-hashtag/' + hashtag + '?limit=' + limit + '&hostname='+baseUrl+'&crop-h=340&crop-w=270&height=360&width=300&title=' + title, {
             method: 'GET',
             headers: new Headers({
                 'Authorization': 'Bearer '+ token,

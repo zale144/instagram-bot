@@ -21,13 +21,7 @@ func (s *Session) GetAllFollowedUsers() []proto.User {
 
 	for following.Next() {
 		for i := range following.Users {
-			details := proto.User{
-				Username:      following.Users[i].Username,
-				FullName:      following.Users[i].FullName,
-				Description:   following.Users[i].Biography,
-				FollowerCount: int64(following.Users[i].FollowerCount),
-				ProfilePicUrl: following.Users[i].ProfilePicURL,
-			}
+			details := ConvertUser(&following.Users[i])
 			followingUsers = append(followingUsers, details)
 		}
 	}
@@ -47,19 +41,13 @@ func (s *Session) GetUsersByHashtag(hashtag string, limit int) []proto.User {
 					if Contains(users, i.Item.User.Username) {
 						continue
 					}
-					details := proto.User{
-						Username:      i.Item.User.Username,
-						FullName:      i.Item.User.FullName,
-						Description:   i.Item.User.Biography,
-						FollowerCount: int64(i.Item.User.FollowerCount),
-						ProfilePicUrl: i.Item.User.ProfilePicURL,
-					}
+					details := ConvertUser(&i.Item.User)
 					users = append(users, details)
+					if len(users) == limit {
+						return users
+					}
 				}
 			}
-		}
-		if len(users) == limit {
-			break
 		}
 	}
 	return users
@@ -168,14 +156,8 @@ func (s *Session) GetProfileInfo(name string) (proto.User, error) {
 		log.Println(err)
 		return userDetails, err
 	}
-	// set fields values
-	userDetails.Username = user.Username
-	userDetails.FullName = user.FullName
-	userDetails.Description = user.Biography
+	userDetails = ConvertUser(user)
 	userDetails.FeaturedPicUrl = img.URL
-	userDetails.ProfilePicUrl = user.ProfilePicURL
-	userDetails.FollowerCount = int64(user.FollowerCount)
-
 	return userDetails, nil
 }
 
@@ -188,6 +170,20 @@ func (s *Session) SendDirectMessage(id, message, title string) (string, error) {
 	}
 	fmt.Println(response)
 	return response.Status, nil
+}
+
+func (s *Session) Follow(username string) (proto.User, error) {
+	user, err := s.GetUserByName(username)
+	if err != nil {
+		log.Println(err)
+		return proto.User{}, err
+	}
+	err = user.Follow()
+	if err != nil {
+		log.Println(err)
+		return proto.User{}, err
+	}
+	return ConvertUser(user), nil
 }
 
 // Logout will logout the user from Instagram
@@ -217,6 +213,15 @@ func GetImageWithMostLikes(images []*model.Media) (*model.Media, error) {
 		}
 	}
 	return mostLiked, nil
+}
+
+func ConvertUser(user *goinsta.User) (p proto.User) {
+	p.Username = user.Username
+	p.ProfilePicUrl = user.ProfilePicURL
+	p.Description = user.Biography
+	p.FollowerCount = int64(user.FollowerCount)
+	p.FullName = user.FullName
+	return p
 }
 
 // cleanURL removes the token from the url

@@ -107,3 +107,20 @@ func (m *Insta) UsersByHashtag(ctx context.Context, req *proto.UserReq, rsp *pro
 	rsp.Users = users
 	return err
 }
+
+func (m *Insta) Follow(ctx context.Context, req *proto.UserReq, rsp *proto.UserResp) error {
+	s, err := service.GetSession(&model.Account{
+		Username: req.Account,
+	})
+	if err != nil {
+		log.Println(err)
+		return err
+	}
+	profile, err := s.Follow(req.Username)
+	if err != nil {
+		log.Println(err)
+		return err
+	}
+	rsp.User = &profile
+	return nil
+}

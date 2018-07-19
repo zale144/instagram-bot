@@ -15,8 +15,7 @@ const (
 )
 
 var (
-	Port   string
-	AppURL string
+	WebUrl string
 )
 
 // jwtCustomClaims are custom claims extending default ones.

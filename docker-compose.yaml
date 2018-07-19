@@ -9,10 +9,13 @@ services:
     environment:
       MICRO_REGISTRY: "consul"
       MICRO_REGISTRY_ADDRESS: "consul"
+    # HOSTNAME: "mydomain.com"
+      WEB_PORT: 4040
+      API_PORT: 4041
       DEBUG: 1
     ports:
     - 4040:4040
-    entrypoint: ./instagram-bot.web # http://localhost:4040
+    entrypoint: ./instagram-bot.web
 
   api:
     image: instagram-bot/api
@@ -23,6 +26,9 @@ services:
     environment:
       MICRO_REGISTRY: "consul"
       MICRO_REGISTRY_ADDRESS: "consul"
+    # HOSTNAME: "mydomain.com"
+      WEB_PORT: 4040
+      API_PORT: 4041
       DEBUG: 1
     ports:
     - 4041:4041

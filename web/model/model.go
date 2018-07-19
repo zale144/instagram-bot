@@ -7,7 +7,6 @@ const (
 )
 
 var (
-	Port   string
-	AppURL string
-	ApiURL = "http://localhost:4041"
+	WebURL string
+	ApiURL string
 )

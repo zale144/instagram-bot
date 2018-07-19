@@ -10,8 +10,6 @@ import (
 	"net/http"
 	"os"
 	"os/exec"
-	"strings"
-
 	"github.com/dchest/authcookie"
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
@@ -19,35 +17,39 @@ import (
 	"github.com/zale144/instagram-bot/web/handlers"
 	"github.com/zale144/instagram-bot/web/model"
 	"github.com/zale144/instagram-bot/web/service"
+	"strings"
 )
 
 var outCh = make(chan string)
 
 func main() {
-
-	model.Port = "4040"
-	model.AppURL = "http://localhost:" + model.Port
-
 	go handlers.RegisterService()
 
-	if len(os.Args) > 1 {
-		URL := os.Args[1]
-		if !strings.Contains(URL, "http") {
-			URL = "http://" + os.Args[1]
-		}
-		model.AppURL = URL
-	} else {
-		go setTunnelURL("hostname", "-i")
-		hostname := "http://" + <-outCh
-		model.AppURL = hostname + ":" + model.Port
-		fmt.Println(model.AppURL)
+	webPort := os.Getenv("WEB_PORT")
+	if webPort == "" {
+		webPort = "4040"
 	}
-	fmt.Println("app url: ", model.AppURL)
+	apiPort := os.Getenv("API_PORT")
+	if apiPort == "" {
+		apiPort = "4041"
+	}
+	hostname := os.Getenv("HOSTNAME")
+	if hostname == "" {
+		go runCommand("hostname", "-i")
+		hostname = <-outCh
+	}
+	if !strings.Contains(hostname, "http") {
+		hostname = "http://" + hostname
+	}
+	model.WebURL = hostname + ":" + webPort
+	model.ApiURL = hostname + ":" + apiPort
+	fmt.Println("WebURL: ", model.WebURL)
+	fmt.Println("APIURL", model.ApiURL)
 
 	e := echo.New()
 
 	t := &wTemplate{
-		templates: template.Must(template.ParseGlob("public/templates/profile/*.html")),
+		templates: template.Must(template.ParseGlob("public/templates/*.html")),
 	}
 	e.Static("/static", "public/static")
 	e.Renderer = t
@@ -75,13 +77,15 @@ func main() {
 	a := e.Group("/admin")
 	a.Use(authMiddleware)
 	a.GET("/home", func(c echo.Context) error {
-		return c.File("public/static/html/index.html")
+		data := map[string]interface{}{
+			"Hostname":   model.ApiURL,
+		}
+		return c.Render(http.StatusOK, "home", data)
 	})
-
-	e.Logger.Fatal(e.Start(":" + model.Port))
+	e.Logger.Fatal(e.Start(":" + webPort))
 }
 
-// check if user is logged in
+// authMiddleware is used to check if user is logged in
 func authMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		cookie, err := c.Cookie(model.CookieName)
@@ -90,7 +94,6 @@ func authMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 			if login == "" {
 				return c.Redirect(http.StatusTemporaryRedirect, "/login")
 			}
-			// TODO - move this to api
 			client := sess.NewSessionService("session", handlers.Srv.Client())
 			rsp, err := client.Get(context.Background(), &sess.SessionRequest{
 				Account: login,
@@ -115,10 +118,9 @@ func (t *wTemplate) Render(w io.Writer, name string, data interface{}, c echo.Co
 	return t.templates.ExecuteTemplate(w, name, data)
 }
 
-func setTunnelURL(name string, args ...string) {
-	//cmd := exec.Command("lt", "--port", model.Port)
+// runCommand will get the container hostname
+func runCommand(name string, args ...string) {
 	cmd := exec.Command(name, args...)
-	// create a pipe for the output of the script
 	cmdReader, err := cmd.StdoutPipe()
 	if err != nil {
 		fmt.Fprintln(os.Stderr, "Error creating StdoutPipe for Cmd", err)

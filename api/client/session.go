@@ -54,3 +54,13 @@ func (s Session) UsersByHashtag(req *sess.UserReq) ([]*sess.User, error) {
 	}
 	return sRsp.Users, nil
 }
+
+func (s Session) Follow(req *sess.UserReq) (*sess.User, error) {
+	sClient := sess.NewInstaService("session", handlers.Srv.Client())
+	sRsp, err := sClient.Follow(context.TODO(), req)
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+	return sRsp, nil
+}

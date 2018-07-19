@@ -12,6 +12,7 @@ service Insta {
 	rpc FollowedUsers(UserReq) returns (Users) {}
 	rpc UserInfo(UserReq) returns (UserResp) {}
 	rpc UsersByHashtag(UserReq) returns (Users) {}
+	rpc Follow(UserReq) returns (UserResp) {}
 }
 
 message SessionRequest {
