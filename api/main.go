@@ -4,16 +4,16 @@ import (
 	"flag"
 	"log"
 
-	"github.com/zale144/instagram-bot/api/handlers"
 	"github.com/zale144/instagram-bot/api/model"
 	"github.com/zale144/instagram-bot/api/service"
-
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
+	"github.com/zale144/instagram-bot/api/handlers"
 )
 
 var (
-	dbInfo = flag.String("db-info", "root:root@tcp(localhost:3306)/cabani_insta?parseTime=true", "database connection string")
+	dbInfo = flag.String("db-info", "postgres://test:test@localhost/insta_db?sslmode=disable", "database connection string")
+	pImages   = flag.String("pImages", "files/images/profiles", "path to profile images folder")
 )
 
 func main() {
@@ -40,6 +40,8 @@ func main() {
 	e.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
 		Format: "method=${method}, uri=${uri}, status=${status}\n",
 	}))
+
+	e.Static("/profile-images", *pImages)
 
 	api := e.Group("/api")
 

@@ -22,6 +22,7 @@ func GenerateImage(options *proto.ImageRequest) ([]byte, error) {
 	if err != nil {
 		return []byte{}, err
 	}
+	fmt.Println(arr)
 	cmd := exec.Command("wkhtmltoimage", arr...)
 
 	if options.Html != "" {
@@ -87,17 +88,17 @@ func buildParams(options *proto.ImageRequest) ([]string, error) {
 
 	if options.CropY != 0 {
 		a = append(a, "--crop-y")
-		a = append(a, strconv.Itoa(int(options.CropX)))
+		a = append(a, strconv.Itoa(int(options.CropY)))
 	}
 
 	if options.CropW != 0 {
 		a = append(a, "--crop-w")
-		a = append(a, strconv.Itoa(int(options.CropX)))
+		a = append(a, strconv.Itoa(int(options.CropW)))
 	}
 
 	if options.CropH != 0 {
 		a = append(a, "--crop-h")
-		a = append(a, strconv.Itoa(int(options.CropX)))
+		a = append(a, strconv.Itoa(int(options.CropH)))
 	}
 
 	// url and output come last

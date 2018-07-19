@@ -9,7 +9,7 @@ import (
 )
 
 const (
-	CookieName          = "CabaniInstagram.Challenge"
+	CookieName          = "Instagram.bot.Challenge"
 	SECRET              = "$P$Bd2WdVjaRR/De58OX2qVu3XA6aiPaf."
 	HEADER_AUTH_USER_ID = "Auth-User-Id"
 )
@@ -17,7 +17,6 @@ const (
 var (
 	Port   string
 	AppURL string
-	WebURL = "http://localhost:4040"
 )
 
 // jwtCustomClaims are custom claims extending default ones.

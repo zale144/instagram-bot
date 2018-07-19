@@ -38,8 +38,8 @@ func main() {
 		model.AppURL = URL
 	} else {
 		go setTunnelURL("hostname", "-i")
-
-		model.AppURL = "http://" + <-outCh + ":" + model.Port
+		hostname := "http://" + <-outCh
+		model.AppURL = hostname + ":" + model.Port
 		fmt.Println(model.AppURL)
 	}
 	fmt.Println("app url: ", model.AppURL)

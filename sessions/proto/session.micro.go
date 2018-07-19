@@ -127,6 +127,7 @@ type InstaService interface {
 	Message(ctx context.Context, in *MessageRequest, opts ...client.CallOption) (*MessageResponse, error)
 	FollowedUsers(ctx context.Context, in *UserReq, opts ...client.CallOption) (*Users, error)
 	UserInfo(ctx context.Context, in *UserReq, opts ...client.CallOption) (*UserResp, error)
+	UsersByHashtag(ctx context.Context, in *UserReq, opts ...client.CallOption) (*Users, error)
 }
 
 type instaService struct {
@@ -177,12 +178,23 @@ func (c *instaService) UserInfo(ctx context.Context, in *UserReq, opts ...client
 	return out, nil
 }
 
+func (c *instaService) UsersByHashtag(ctx context.Context, in *UserReq, opts ...client.CallOption) (*Users, error) {
+	req := c.c.NewRequest(c.name, "Insta.UsersByHashtag", in)
+	out := new(Users)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // Server API for Insta service
 
 type InstaHandler interface {
 	Message(context.Context, *MessageRequest, *MessageResponse) error
 	FollowedUsers(context.Context, *UserReq, *Users) error
 	UserInfo(context.Context, *UserReq, *UserResp) error
+	UsersByHashtag(context.Context, *UserReq, *Users) error
 }
 
 func RegisterInstaHandler(s server.Server, hdlr InstaHandler, opts ...server.HandlerOption) {
@@ -190,6 +202,7 @@ func RegisterInstaHandler(s server.Server, hdlr InstaHandler, opts ...server.Han
 		Message(ctx context.Context, in *MessageRequest, out *MessageResponse) error
 		FollowedUsers(ctx context.Context, in *UserReq, out *Users) error
 		UserInfo(ctx context.Context, in *UserReq, out *UserResp) error
+		UsersByHashtag(ctx context.Context, in *UserReq, out *Users) error
 	}
 	type Insta struct {
 		insta
@@ -212,4 +225,8 @@ func (h *instaHandler) FollowedUsers(ctx context.Context, in *UserReq, out *User
 
 func (h *instaHandler) UserInfo(ctx context.Context, in *UserReq, out *UserResp) error {
 	return h.InstaHandler.UserInfo(ctx, in, out)
+}
+
+func (h *instaHandler) UsersByHashtag(ctx context.Context, in *UserReq, out *Users) error {
+	return h.InstaHandler.UsersByHashtag(ctx, in, out)
 }

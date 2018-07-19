@@ -15,6 +15,8 @@ import (
 	"github.com/zale144/instagram-bot/api/storage"
 	htmlToImage "github.com/zale144/instagram-bot/htmlToimage/proto"
 	sess "github.com/zale144/instagram-bot/sessions/proto"
+	"strings"
+	"time"
 )
 
 type UserService struct{}
@@ -35,7 +37,7 @@ func (ur UserService) GetAllFollowed(c echo.Context) error {
 	return c.JSON(http.StatusOK, followedUsers)
 }
 
-var formValNames = []string{"title", "width", "height", "zoom"}
+var formValNames = []string{"title", "width", "height", "crop-h", "crop-w", "hostname"}
 
 // process the profile into a link and send it to the user's Instagram profile
 func (ur UserService) ProcessUser(c echo.Context) error {
@@ -64,11 +66,11 @@ func (ur UserService) ProcessUser(c echo.Context) error {
 	return c.String(http.StatusOK, msg)
 }
 
-/* // process the all profiles found by specified hashtag, limited by provided parameter
+// process the all profiles found by specified hashtag, limited by provided parameter
 func (ur UserService) ProcessUsersByHashtag(c echo.Context) error {
 	// get user from token
 	user := c.Get("user").(*jwt.Token)
-	claims := user.Claims.(*JwtCustomClaims)
+	claims := user.Claims.(*model.JwtCustomClaims)
 	account := claims.Name
 	if c.Param("hashtag") == "" {
 		err := errors.New("missing parameter 'hashtag'")
@@ -115,6 +117,7 @@ func (ur UserService) ProcessUsersByHashtag(c echo.Context) error {
 	storage.JobStorage{}.Insert(&job)
 
 	go func() {
+		users := client.Session{}
 		processedUsers := []model.UserDetails{}
 		h := s.GetInsta().NewHashtag(params["hashtag"])
 		for h.Next() {
@@ -180,11 +183,12 @@ func (ur UserService) ProcessUsersByHashtag(c echo.Context) error {
 		return
 	}()
 	return c.String(http.StatusOK, "Job created!")
-} */
+}
 
 // process the profile into a link and send it to the user's Instagram profile
 func (ur UserService) Process(params map[string]string) (string, error) {
-	url := model.WebURL + "/user-info/" + params["account"] + "/" + params["username"]
+	hostname := params["hostname"]
+	url := hostname + "/user-info/" + params["account"] + "/" + params["username"]
 
 	fmt.Println("user info at url: ", url)
 	fmt.Println(params["username"])
@@ -202,16 +206,21 @@ func (ur UserService) Process(params map[string]string) (string, error) {
 	if err == nil {
 		options.Height = int32(height)
 	}
-	zoom, err := strconv.ParseFloat(params["zoom"], 64)
+	crop_h, err := strconv.Atoi(params["crop-h"])
 	if err == nil {
-		options.Zoom = float32(zoom)
+		options.CropH = int32(crop_h)
 	}
+	crop_w, err := strconv.Atoi(params["crop-w"])
+	if err == nil {
+		options.CropW = int32(crop_w)
+	}
+	options.CropX = int32((width - crop_w) / 2)
+	options.CropY = int32((height - crop_h) / 2)
 	imgResp, err := client.HtmlToImage{}.Process(options)
 	if err != nil {
 		log.Println(err)
 		return "", err
 	}
-	// TODO file storage
 	path := "files/images/profiles/" + options.Name + ".jpg"
 	f, err := os.Create(path)
 	if err != nil {

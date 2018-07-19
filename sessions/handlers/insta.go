@@ -83,3 +83,27 @@ func (m *Insta) UserInfo(ctx context.Context, req *proto.UserReq, rsp *proto.Use
 	rsp.User = user
 	return err
 }
+
+func (m *Insta) UsersByHashtag(ctx context.Context, req *proto.UserReq, rsp *proto.Users) error {
+	s, err := service.GetSession(&model.Account{
+		Username: req.Account,
+	})
+	if err != nil {
+		log.Println(err)
+		return err
+	}
+	users := []*proto.User{}
+	for _, v := range s.GetUsersByHashtag(req.Hashtag, int(req.Limit)) {
+		user := &proto.User{
+			Username:       v.Username,
+			FullName:       v.FullName,
+			Description:    v.Description,
+			FollowerCount:  int64(v.FollowerCount),
+			ProfilePicUrl:  v.ProfilePicUrl,
+			FeaturedPicUrl: v.FeaturedPicUrl,
+		}
+		users = append(users, user)
+	}
+	rsp.Users = users
+	return err
+}

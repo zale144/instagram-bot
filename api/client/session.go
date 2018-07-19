@@ -44,3 +44,13 @@ func (s Session) Message(req *sess.MessageRequest) (string, error) {
 	}
 	return sRsp.Response, nil
 }
+
+func (s Session) UsersByHashtag(req *sess.UserReq) ([]*sess.User, error) {
+	sClient := sess.NewInstaService("session", handlers.Srv.Client())
+	sRsp, err := sClient.UsersByHashtag(context.TODO(), req)
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+	return sRsp.Users, nil
+}

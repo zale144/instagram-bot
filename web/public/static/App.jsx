@@ -71,7 +71,7 @@ class App extends React.Component {
             }))
         });
 
-        fetch(baseUrl + '/api/process/' + user + '?zoom=0.4&height=430&width=300&title=Register%20at%20Cabani', {
+        fetch(baseUrl + '/api/process/' + user + '?hostname='+hostname+'&crop-h=340&crop-w=270&height=360&width=300&title=Register%20at%20My-Site', {
             method: 'GET',
             headers: new Headers({
                 'Authorization': 'Bearer '+ token,
@@ -230,7 +230,7 @@ class NewJob extends React.Component {
             alert('title cannot be empty');
             return;
         }
-        fetch(baseUrl + '/api/process-by-hashtag/' + hashtag + '?limit=' + limit + '&zoom=0.4&height=430&width=300&title=' + title, {
+        fetch(baseUrl + '/api/process-by-hashtag/' + hashtag + '?limit=' + limit + '&hostname='+hostname+'&crop-h=340&crop-w=270&height=360&width=300&title=' + title, {
             method: 'GET',
             headers: new Headers({
                 'Authorization': 'Bearer '+ token,

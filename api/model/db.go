@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/jinzhu/gorm"
-	_ "github.com/jinzhu/gorm/dialects/mysql"
+	_ "github.com/jinzhu/gorm/dialects/postgres"
 )
 
 var (
@@ -18,7 +18,7 @@ func openDB() (*gorm.DB, error) {
 		return DB, nil
 	}
 	var err error
-	DB, err = gorm.Open("mysql", DBInfo)
+	DB, err = gorm.Open("postgres", DBInfo)
 	if err != nil {
 		return nil, err
 	}

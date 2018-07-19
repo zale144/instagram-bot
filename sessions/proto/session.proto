@@ -11,6 +11,7 @@ service Insta {
 	rpc Message(MessageRequest) returns (MessageResponse) {}
 	rpc FollowedUsers(UserReq) returns (Users) {}
 	rpc UserInfo(UserReq) returns (UserResp) {}
+	rpc UsersByHashtag(UserReq) returns (Users) {}
 }
 
 message SessionRequest {
@@ -28,7 +29,9 @@ message Users {
 
 message UserReq {
 	string account = 1;
-	string Username = 2;
+	string username = 2;
+	string hashtag = 3;
+	int64 limit = 4;
 }
 
 message UserResp {
