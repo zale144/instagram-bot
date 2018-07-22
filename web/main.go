@@ -1,15 +1,12 @@
 package main
 
 import (
-	"bufio"
 	"context"
-	"fmt"
 	"html/template"
 	"io"
 	"log"
 	"net/http"
 	"os"
-	"os/exec"
 	"github.com/dchest/authcookie"
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
@@ -17,34 +14,10 @@ import (
 	"github.com/zale144/instagram-bot/web/handlers"
 	"github.com/zale144/instagram-bot/web/model"
 	"github.com/zale144/instagram-bot/web/service"
-	"strings"
 )
-
-var outCh = make(chan string)
 
 func main() {
 	go handlers.RegisterService()
-
-	webPort := os.Getenv("WEB_PORT")
-	if webPort == "" {
-		webPort = "4040"
-	}
-	apiPort := os.Getenv("API_PORT")
-	if apiPort == "" {
-		apiPort = "4041"
-	}
-	hostname := os.Getenv("HOSTNAME")
-	if hostname == "" {
-		go runCommand("hostname", "-i")
-		hostname = <-outCh
-	}
-	if !strings.Contains(hostname, "http") {
-		hostname = "http://" + hostname
-	}
-	model.WebURL = hostname + ":" + webPort
-	model.ApiURL = hostname + ":" + apiPort
-	fmt.Println("WebURL: ", model.WebURL)
-	fmt.Println("APIURL", model.ApiURL)
 
 	e := echo.New()
 
@@ -76,13 +49,16 @@ func main() {
 	// ***************** private ***************************
 	a := e.Group("/admin")
 	a.Use(authMiddleware)
+
+	model.ApiURL = os.Getenv("API_HOST")
+
 	a.GET("/home", func(c echo.Context) error {
 		data := map[string]interface{}{
-			"WebURL":   model.WebURL,
 			"ApiURL":   model.ApiURL,
 		}
 		return c.Render(http.StatusOK, "home", data)
 	})
+	webPort := os.Getenv("WEB_PORT")
 	e.Logger.Fatal(e.Start(":" + webPort))
 }
 
@@ -119,28 +95,3 @@ func (t *wTemplate) Render(w io.Writer, name string, data interface{}, c echo.Co
 	return t.templates.ExecuteTemplate(w, name, data)
 }
 
-// runCommand will get the container hostname
-func runCommand(name string, args ...string) {
-	cmd := exec.Command(name, args...)
-	cmdReader, err := cmd.StdoutPipe()
-	if err != nil {
-		fmt.Fprintln(os.Stderr, "Error creating StdoutPipe for Cmd", err)
-		return
-	}
-	scanner := bufio.NewScanner(cmdReader)
-	go func() {
-		for scanner.Scan() {
-			outCh <- scanner.Text()
-		}
-	}()
-	err = cmd.Start()
-	if err != nil {
-		fmt.Fprintln(os.Stderr, "Error starting Cmd", err)
-		return
-	}
-	err = cmd.Wait()
-	if err != nil {
-		fmt.Fprintln(os.Stderr, "Error waiting for Cmd", err)
-		return
-	}
-}

@@ -3,20 +3,25 @@ package main
 import (
 	"log"
 
-	micro "github.com/micro/go-micro"
+	"github.com/micro/go-micro"
 	"github.com/zale144/instagram-bot/htmlToimage/handlers"
 	proto "github.com/zale144/instagram-bot/htmlToimage/proto"
+	"github.com/zale144/instagram-bot/htmlToimage/service"
+	"os"
 )
 
 func main() {
-	service := micro.NewService(
+
+	service.WebURI = os.Getenv("WEB_LOCAL")
+
+	srv := micro.NewService(
 		micro.Name("htmltoimage"),
 		micro.Version("latest"),
 	)
-	service.Init()
-	proto.RegisterHtmlToImageHandler(service.Server(), new(handlers.HtmlToImage))
+	srv.Init()
+	proto.RegisterHtmlToImageHandler(srv.Server(), new(handlers.HtmlToImage))
 
-	if err := service.Run(); err != nil {
+	if err := srv.Run(); err != nil {
 		log.Fatal(err)
 	}
 }

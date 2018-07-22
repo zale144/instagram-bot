@@ -37,7 +37,7 @@ func (ur UserService) GetAllFollowed(c echo.Context) error {
 	return c.JSON(http.StatusOK, followedUsers)
 }
 
-var formValNames = []string{"title", "width", "height", "crop-h", "crop-w", "hostname"}
+var formValNames = []string{"title", "width", "height", "crop-h", "crop-w"}
 
 // process the profile into a link and send it to the user's Instagram profile
 func (ur UserService) ProcessUser(c echo.Context) error {
@@ -183,8 +183,7 @@ func (ur UserService) ProcessUsersByHashtag(c echo.Context) error {
 
 // process the profile into a link and send it to the user's Instagram profile
 func (ur UserService) Process(params map[string]string) (string, error) {
-	hostname := params["hostname"]
-	url := hostname + "/user-info/" + params["account"] + "/" + params["username"]
+	url := "/user-info/" + params["account"] + "/" + params["username"]
 
 	fmt.Println("user info at url: ", url)
 	fmt.Println(params["username"])
@@ -202,16 +201,16 @@ func (ur UserService) Process(params map[string]string) (string, error) {
 	if err == nil {
 		options.Height = int32(height)
 	}
-	crop_h, err := strconv.Atoi(params["crop-h"])
+	cropH, err := strconv.Atoi(params["crop-h"])
 	if err == nil {
-		options.CropH = int32(crop_h)
+		options.CropH = int32(cropH)
 	}
-	crop_w, err := strconv.Atoi(params["crop-w"])
+	cropW, err := strconv.Atoi(params["crop-w"])
 	if err == nil {
-		options.CropW = int32(crop_w)
+		options.CropW = int32(cropW)
 	}
-	options.CropX = int32((width - crop_w) / 2)
-	options.CropY = int32((height - crop_h) / 2)
+	options.CropX = int32((width - cropW) / 2)
+	options.CropY = int32((height - cropH) / 2)
 	imgResp, err := client.HtmlToImage{}.Process(options)
 	if err != nil {
 		log.Println(err)
@@ -228,8 +227,8 @@ func (ur UserService) Process(params map[string]string) (string, error) {
 		log.Println(err)
 		return "", err
 	}
-	message := model.WebUrl + "/calling-card/" + params["username"]
-	/*mReq := &sess.MessageRequest{
+	message := model.WebURL + "/calling-card/" + params["username"]
+	mReq := &sess.MessageRequest{
 		Sender:    params["account"],
 		Recipient: params["username"],
 		Title:     params["title"],
@@ -240,7 +239,7 @@ func (ur UserService) Process(params map[string]string) (string, error) {
 		fmt.Println(err)
 		return "", nil
 	}
-	fmt.Println(mRsp)*/
+	fmt.Println(mRsp)
 
 	return message, nil
 }

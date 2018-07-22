@@ -16,10 +16,12 @@ var Srv micro.Service
 type Api struct{}
 
 func (w *Api) Job(ctx context.Context, req *proto.JobReq, rsp *proto.JobResp) error {
+	// TODO
 	return nil
 }
 
 func (w *Api) User(ctx context.Context, req *proto.UserReq, rsp *proto.UserResp) error {
+	// TODO
 	return nil
 }
 

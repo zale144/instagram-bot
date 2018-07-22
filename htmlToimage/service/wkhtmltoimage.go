@@ -15,6 +15,7 @@ import (
 	proto "github.com/zale144/instagram-bot/htmlToimage/proto"
 )
 
+var WebURI string
 // GenerateImage creates an image from an input.
 // It returns the image ([]byte) and any error encountered.
 func GenerateImage(options *proto.ImageRequest) ([]byte, error) {
@@ -50,6 +51,7 @@ func buildParams(options *proto.ImageRequest) ([]string, error) {
 	if options.Input == "" {
 		return []string{}, errors.New("Must provide input")
 	}
+	options.Input = WebURI + options.Input
 	// might want to add --html too?
 	a = append(a, "-q")
 	a = append(a, "--disable-plugins")

@@ -6,12 +6,15 @@ services:
     build: ./web
     depends_on:
     - consul
+    networks:
+      backend:
+        aliases:
+        - web.local
     environment:
       MICRO_REGISTRY: "consul"
       MICRO_REGISTRY_ADDRESS: "consul"
-    # HOSTNAME: "mydomain.com"
       WEB_PORT: 4040
-      API_PORT: 4041
+      API_HOST: "http://localhost:4041"
       DEBUG: 1
     ports:
     - 4040:4040
@@ -23,11 +26,12 @@ services:
     depends_on:
     - db
     - consul
+    networks:
+    - backend
     environment:
       MICRO_REGISTRY: "consul"
       MICRO_REGISTRY_ADDRESS: "consul"
-    # HOSTNAME: "mydomain.com"
-      WEB_PORT: 4040
+      WEB_HOST: "http://localhost:4040"
       API_PORT: 4041
       DEBUG: 1
     ports:
@@ -42,7 +46,10 @@ services:
     environment:
       MICRO_REGISTRY: "consul"
       MICRO_REGISTRY_ADDRESS: "consul"
+      WEB_LOCAL: "http://web.local:4040"
       DEBUG: 1
+    networks:
+    - backend
     entrypoint: ./htmlToimage
 
   sessions:
@@ -53,30 +60,54 @@ services:
     environment:
       MICRO_REGISTRY: "consul"
       MICRO_REGISTRY_ADDRESS: "consul"
+      RPC_URI: "http://sidecar:4000"
       DEBUG: 1
+    networks:
+    - backend
     entrypoint: ./instagram-bot.sessions
+
+  db:
+    image: postgres:10.4
+    container_name: insta_db
+    depends_on:
+    - consul
+    environment:
+      POSTGRES_DB: insta_db
+      POSTGRES_USER: test
+      POSTGRES_PASSWORD: test
+    networks:
+      backend:
+        aliases:
+        - instadb
+    ports:
+    - 5432:5432
+    expose:
+    - 5432
 
   facedetect:
     image: instagram-bot/facedetect
     build: ./faceDetect
     depends_on:
     - consul
+    environment:
+      RPC_URI: "sidecar"
+    networks:
+      backend:
+        aliases:
+        - sidecar
+    entrypoint: ["python3", "sidecar_server.py"]
 
   consul:
     image: consul:latest
     command: agent -server -bootstrap-expect=1 -log-level=warn -ui -client=0.0.0.0
     hostname: consul
+    networks:
+      backend:
+        aliases:
+        - consul
     ports:
     - 8500:8500
 
-  db:
-    image: postgres:10.4
-    container_name: web-db
-    environment:
-      DB_NAME: insta_db
-      DB_USER: test
-      DB_PASS: test
-    ports:
-    - 5432:5432
-    expose:
-    - 5432
+networks:
+  backend:
+    driver: bridge

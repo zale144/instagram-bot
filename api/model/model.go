@@ -15,7 +15,7 @@ const (
 )
 
 var (
-	WebUrl string
+	WebURL string
 )
 
 // jwtCustomClaims are custom claims extending default ones.

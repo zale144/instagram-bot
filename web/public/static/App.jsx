@@ -1,6 +1,5 @@
 const {Table, Tabs, Tab, Modal, Button} = ReactBootstrap;
 let token = localStorage.getItem('access_token');
-let webURL;
 let apiURL;
 window.globalReactFunctions = {};
 
@@ -72,7 +71,7 @@ class App extends React.Component {
             }))
         });
 
-        fetch(apiURL + '/api/process/' + user + '?hostname='+webURL+'&crop-h=340&crop-w=270&height=360&width=300&title=Register%20at%20My-Site', {
+        fetch(apiURL + '/api/process/' + user + '?crop-h=340&crop-w=270&height=360&width=300&title=Register%20at%20My-Site', {
             method: 'GET',
             headers: new Headers({
                 'Authorization': 'Bearer '+ token,
@@ -164,7 +163,6 @@ class App extends React.Component {
     }
 
     componentDidMount() {
-        webURL = document.getElementById('web').value;
         apiURL = document.getElementById('api').value;
         this.loadFollowed();
     }
@@ -233,7 +231,7 @@ class NewJob extends React.Component {
             alert('title cannot be empty');
             return;
         }
-        fetch(apiURL + '/api/process-by-hashtag/' + hashtag + '?limit=' + limit + '&hostname='+webURL+'&crop-h=340&crop-w=270&height=360&width=300&title=' + title, {
+        fetch(apiURL + '/api/process-by-hashtag/' + hashtag + '?limit=' + limit + '&crop-h=340&crop-w=270&height=360&width=300&title=' + title, {
             method: 'GET',
             headers: new Headers({
                 'Authorization': 'Bearer '+ token,

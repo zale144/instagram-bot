@@ -11,9 +11,7 @@ import (
 	"github.com/zale144/goinsta"
 	"github.com/zale144/instagram-bot/sessions/model"
 	proto "github.com/zale144/instagram-bot/sessions/proto"
-	"os/exec"
-	"strconv"
-	"strings"
+	"github.com/zale144/instagram-bot/sessions/client"
 )
 
 // GetAllFollowedUsers will retrieve all followed Instagram users
@@ -205,7 +203,9 @@ func GetImageWithMostLikes(images []*model.Media) (*model.Media, error) {
 		mostLiked = images[0]
 
 		for _, img := range images {
-			p, err := IsPerson(img.URL)
+			// RPC to the facedetect service which runs an OpenCV face detection
+			// and returns the number of detected faces in the provided image url
+			p, err := client.GetNumberOfFaces(img.URL)
 			if err != nil {
 				log.Println(err)
 			}
@@ -220,18 +220,6 @@ func GetImageWithMostLikes(images []*model.Media) (*model.Media, error) {
 		}
 	}
 	return mostLiked, nil
-}
-
-// IsPerson runs a Dockerized python script with OpenCV that uses a
-// machine perception algorithm to check whether it's a picture of a person
-func IsPerson(input string) (int, error) {
-	com := "docker run --rm facedetect " + input
-	out, _ := exec.Command("/bin/sh", "-c", com).Output()
-	n, err := strconv.Atoi(strings.TrimSuffix(string(out), "\n"))
-	if err != nil {
-		return 0, err
-	}
-	return n, nil
 }
 
 func ConvertUser(user *goinsta.User) (p proto.User) {

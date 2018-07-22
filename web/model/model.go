@@ -7,6 +7,5 @@ const (
 )
 
 var (
-	WebURL string
 	ApiURL string
 )

@@ -275,22 +275,12 @@
   revision = "dcecefd839c4193db0d35b88ec65b4c12d360ab0"
 
 [[projects]]
-  digest = "1:ba13c8f45326a9a4cb5e046a268a49a00d5e1db5c8b5f0d54593cd6c27c7e452"
-  name = "github.com/zale144/goinsta"
-  packages = ["."]
-  pruneopts = "UT"
-  revision = "8a4b1078ad1b865b881561251c8d5b07e0765994"
-  version = "v2.3"
-
-[[projects]]
   branch = "master"
-  digest = "1:99a1bfdf0c488729af20eebeecb110f65a1e549dfe7ee000f1b33960a0811ba2"
+  digest = "1:65a1c70795095c53697a09f69cb630c5a8d45fbf92304189ef401459694dd188"
   name = "github.com/zale144/instagram-bot"
   packages = [
     "htmlToimage/proto",
-    "sessions/model",
     "sessions/proto",
-    "sessions/service",
   ]
   pruneopts = "UT"
   revision = "55a7dc88887273ac748041d62bbb16695a903f88"
@@ -346,7 +336,6 @@
     "github.com/micro/go-micro/server",
     "github.com/zale144/instagram-bot/htmlToimage/proto",
     "github.com/zale144/instagram-bot/sessions/proto",
-    "github.com/zale144/instagram-bot/sessions/service",
   ]
   solver-name = "gps-cdcl"
   solver-version = 1

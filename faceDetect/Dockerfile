@@ -1,12 +1,11 @@
- 
-# Dockerfile
 FROM kavolorn/opencv
 
 COPY . .
 
-RUN apt-get update
-RUN apt-get install -y curl
-RUN curl -O https://bootstrap.pypa.io/get-pip.py
-RUN python3 get-pip.py
-
-ENTRYPOINT ["python3","-u","face_detect.py"]
+RUN apt-get update \
+    && apt-get install -y curl \
+    && curl -O https://bootstrap.pypa.io/get-pip.py \
+    && python3 get-pip.py \
+    && pip install werkzeug \
+    && pip install json-rpc \
+    && pip install requests

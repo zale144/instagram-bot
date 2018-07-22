@@ -2,6 +2,10 @@ package model
 
 import "time"
 
+var (
+	RpcURI string
+)
+
 type Account struct {
 	Username string `json:"username" form:"username" query:"username"`
 	Password string `json:"password" form:"password" query:"password"`
