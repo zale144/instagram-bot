@@ -19,19 +19,16 @@ func (m *Insta) Message(ctx context.Context, req *proto.MessageRequest, rsp *pro
 	s, err := service.GetSession(&model.Account{Username: req.Sender})
 	if err != nil {
 		log.Println(err)
-		rsp.Error = err.Error()
 		return err
 	}
 	userByName, err := s.GetUserByName(req.Recipient)
 	if err != nil {
 		log.Println(err)
-		rsp.Error = err.Error()
 		return err
 	}
 	response, err := s.SendDirectMessage(fmt.Sprintf("%v", userByName.ID), req.Text, req.Title)
 	if err != nil {
 		log.Println(err)
-		rsp.Error = err.Error()
 	}
 	rsp.Response = response
 	return err
@@ -84,6 +81,8 @@ func (m *Insta) UserInfo(ctx context.Context, req *proto.UserReq, rsp *proto.Use
 	return err
 }
 
+// UsersByHashtag handles the request to batch process
+// all Instagram users associated with the provided hashtag
 func (m *Insta) UsersByHashtag(ctx context.Context, req *proto.UserReq, rsp *proto.Users) error {
 	s, err := service.GetSession(&model.Account{
 		Username: req.Account,
@@ -108,6 +107,7 @@ func (m *Insta) UsersByHashtag(ctx context.Context, req *proto.UserReq, rsp *pro
 	return err
 }
 
+// Follow handles the request to follow the Instagram user ith provided username
 func (m *Insta) Follow(ctx context.Context, req *proto.UserReq, rsp *proto.UserResp) error {
 	s, err := service.GetSession(&model.Account{
 		Username: req.Account,

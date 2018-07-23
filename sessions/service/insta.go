@@ -9,9 +9,9 @@ import (
 	"time"
 
 	"github.com/zale144/goinsta"
+	"github.com/zale144/instagram-bot/sessions/client"
 	"github.com/zale144/instagram-bot/sessions/model"
 	proto "github.com/zale144/instagram-bot/sessions/proto"
-	"github.com/zale144/instagram-bot/sessions/client"
 )
 
 // GetAllFollowedUsers will retrieve all followed Instagram users
@@ -64,7 +64,7 @@ func Contains(users []proto.User, username string) bool {
 	return false
 }
 
-// GetUserByName will retrieve the user struct from instagram API
+// GetUserByName will retrieve the user struct from Instagram API
 func (s *Session) GetUserByName(name string) (*goinsta.User, error) {
 	user, err := s.insta.Profiles.ByName(name)
 	if err != nil {
@@ -173,6 +173,7 @@ func (s *Session) SendDirectMessage(id, message, title string) (string, error) {
 	return response.Status, nil
 }
 
+// Follow follows the user with provided username
 func (s *Session) Follow(username string) (proto.User, error) {
 	user, err := s.GetUserByName(username)
 	if err != nil {
@@ -222,6 +223,7 @@ func GetImageWithMostLikes(images []*model.Media) (*model.Media, error) {
 	return mostLiked, nil
 }
 
+// ConvertUser converts the 'goinsta.User' to 'proto.User'
 func ConvertUser(user *goinsta.User) (p proto.User) {
 	p.Username = user.Username
 	p.ProfilePicUrl = user.ProfilePicURL

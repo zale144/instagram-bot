@@ -21,7 +21,7 @@ func (j JobStorage) GetAll() ([]model.Job, error) {
 	return jobs, nil
 }
 
-// Get job by hashtag
+// GetByHashTag fetches a job by hashtag
 func (j JobStorage) GetByHashTag(hashtag string) (*model.Job, error) {
 	var job model.Job
 	err := model.DB.
@@ -33,7 +33,7 @@ func (j JobStorage) GetByHashTag(hashtag string) (*model.Job, error) {
 	return &job, nil
 }
 
-// Get ongoing job by hashtag
+// GetOngoingByHashTag fetches an ongoing job by hashtag
 func (j JobStorage) GetOngoingByHashTag(hashtag string) (*model.Job, error) {
 	var job model.Job
 	err := model.DB.
@@ -45,7 +45,7 @@ func (j JobStorage) GetOngoingByHashTag(hashtag string) (*model.Job, error) {
 	return &job, nil
 }
 
-// save a job database
+// Insert saves a job to the database
 func (j JobStorage) Insert(job *model.Job) error {
 	tx := model.DB.Begin()
 	if err := tx.Save(job).Error; err != nil {
@@ -65,6 +65,7 @@ type JobUpdater struct {
 	updates map[string]interface{}
 }
 
+// NewJobUpdater creates an instance of a JobUpdater struct
 func (p JobStorage) NewJobUpdater(jobID uint) *JobUpdater {
 	return &JobUpdater{
 		jobID:   jobID,
@@ -72,11 +73,13 @@ func (p JobStorage) NewJobUpdater(jobID uint) *JobUpdater {
 	}
 }
 
+// FinishedAt sets the 'finished_at' column for updating
 func (a *JobUpdater) FinishedAt(f int64) *JobUpdater {
 	a.updates["finished_at"] = f
 	return a
 }
 
+// Update commits the update request
 func (a *JobUpdater) Update(tx *gorm.DB) error {
 	if tx == nil {
 		tx = model.DB

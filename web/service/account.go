@@ -18,7 +18,7 @@ import (
 
 type AccountService struct{}
 
-// method for handling login requests
+// Login handles login requests
 func (ar AccountService) Login(c echo.Context) error {
 
 	username, password, ok := c.Request().BasicAuth()
@@ -66,7 +66,7 @@ func (ar AccountService) Login(c echo.Context) error {
 	})
 }
 
-// method for handling logout requests
+// Logout handles logout requests
 func (ar AccountService) Logout(c echo.Context) error {
 	// expire the cookie
 	cookie := &http.Cookie{
@@ -91,7 +91,7 @@ func (ar AccountService) Logout(c echo.Context) error {
 	return c.Redirect(http.StatusSeeOther, "/login")
 }
 
-// get the username from the cookie
+// GetUsernameFromCookie gets the username from the cookie
 func GetUsernameFromCookie(cp *echo.Context) (string, error) {
 	c := *cp
 	headers := c.Request().Header

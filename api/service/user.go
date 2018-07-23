@@ -21,7 +21,9 @@ import (
 
 type UserService struct{}
 
-// get all followed users
+var formValNames = []string{"title", "width", "height", "crop-h", "crop-w"}
+
+// GetAllFollowed fetches all followed users
 func (ur UserService) GetAllFollowed(c echo.Context) error {
 	// get user from token
 	user := c.Get("user").(*jwt.Token)
@@ -37,9 +39,7 @@ func (ur UserService) GetAllFollowed(c echo.Context) error {
 	return c.JSON(http.StatusOK, followedUsers)
 }
 
-var formValNames = []string{"title", "width", "height", "crop-h", "crop-w"}
-
-// process the profile into a link and send it to the user's Instagram profile
+// ProcessUser handles requests to process a single user, by provided username
 func (ur UserService) ProcessUser(c echo.Context) error {
 	// get user from token
 	user := c.Get("user").(*jwt.Token)
@@ -66,7 +66,7 @@ func (ur UserService) ProcessUser(c echo.Context) error {
 	return c.String(http.StatusOK, msg)
 }
 
-// process the all profiles found by specified hashtag, limited by provided parameter
+// ProcessUsersByHashtag processes all profiles found by specified hashtag, limited by provided parameter
 func (ur UserService) ProcessUsersByHashtag(c echo.Context) error {
 	// get user from token
 	user := c.Get("user").(*jwt.Token)
@@ -181,7 +181,7 @@ func (ur UserService) ProcessUsersByHashtag(c echo.Context) error {
 	return c.String(http.StatusOK, "Job created!")
 }
 
-// process the profile into a link and send it to the user's Instagram profile
+// Process processes the profile into a link and send it to the user's Instagram profile
 func (ur UserService) Process(params map[string]string) (string, error) {
 	url := "/user-info/" + params["account"] + "/" + params["username"]
 
@@ -244,7 +244,7 @@ func (ur UserService) Process(params map[string]string) (string, error) {
 	return message, nil
 }
 
-// get processed users
+// GetProcessed will get all processed users, paginated
 func (ur UserService) GetProcessed(c echo.Context) error {
 	page := c.Param("page")
 	if page == "" {
@@ -266,7 +266,7 @@ func (ur UserService) GetProcessed(c echo.Context) error {
 	return c.JSON(http.StatusOK, users)
 }
 
-// get processed users by job id
+// GetProcessedByJob fetches processed users by job id
 func (ur UserService) GetProcessedByJob(c echo.Context) error {
 	jobIDStr := c.Param("jobID")
 	if jobIDStr == "" {
@@ -299,7 +299,7 @@ func (ur UserService) GetProcessedByJob(c echo.Context) error {
 	return c.JSON(http.StatusOK, users)
 }
 
-// search profile by username
+// Search searches an Instagram profile by username
 func (ur UserService) Search(c echo.Context) error {
 	user := c.Get("user").(*jwt.Token)
 	claims := user.Claims.(*model.JwtCustomClaims)
@@ -319,7 +319,7 @@ func (ur UserService) Search(c echo.Context) error {
 	return c.JSON(http.StatusOK, profile)
 }
 
-// follow profile by username
+// Follow follows an Instagram profile by provided username
 func (ur UserService) Follow(c echo.Context) error {
 	user := c.Get("user").(*jwt.Token)
 	claims := user.Claims.(*model.JwtCustomClaims)

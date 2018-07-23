@@ -11,7 +11,7 @@ import (
 
 type JobService struct{}
 
-// get all jobs
+// GetJobs fetches all jobs
 func (jr JobService) GetJobs(c echo.Context) error {
 	jobs, err := storage.JobStorage{}.GetAll()
 	if err != nil {

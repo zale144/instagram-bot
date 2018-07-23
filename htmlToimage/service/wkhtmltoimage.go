@@ -120,6 +120,8 @@ func buildParams(options *proto.ImageRequest) ([]string, error) {
 	return a, nil
 }
 
+// cleanupOutput respects the image format
+// and returns a slice of byte
 func cleanupOutput(img []byte, format string) []byte {
 	buf := new(bytes.Buffer)
 	switch {

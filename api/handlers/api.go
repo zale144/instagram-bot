@@ -27,6 +27,7 @@ func (w *Api) User(ctx context.Context, req *proto.UserReq, rsp *proto.UserResp)
 
 type LoginService struct{}
 
+// Login handles a login request for the api service
 func (l *LoginService) Login(ctx context.Context, req *proto.LoginReq, rsp *proto.LoginResp) error {
 	claims := &model.JwtCustomClaims{
 		req.Username,
@@ -47,6 +48,7 @@ func (l *LoginService) Login(ctx context.Context, req *proto.LoginReq, rsp *prot
 	return nil
 }
 
+// RegisterService registers the 'api' microservice
 func RegisterService() {
 	Srv = micro.NewService(
 		micro.Name("api"),

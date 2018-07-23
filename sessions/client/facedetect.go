@@ -1,12 +1,12 @@
 package client
 
 import (
-	"encoding/json"
-	"net/http"
 	"bytes"
+	"encoding/json"
+	"github.com/zale144/instagram-bot/sessions/model"
 	"io/ioutil"
 	"log"
-	"github.com/zale144/instagram-bot/sessions/model"
+	"net/http"
 )
 
 type Response struct {
@@ -14,11 +14,12 @@ type Response struct {
 }
 
 // GetNumberOfFaces will make a rpc call to a facedetect service
+// and return a number of faces found on an image from the url provided
 func GetNumberOfFaces(url string) (int, error) {
 	request := map[string]interface{}{
-		"id":"0",
-		"method":  "Num.Faces",
-		"params": []map[string]string{{"url":  url }},
+		"id":     "0",
+		"method": "Num.Faces",
+		"params": []map[string]string{{"url": url}},
 	}
 	rsp, err := rpcCall(request)
 	if err != nil {

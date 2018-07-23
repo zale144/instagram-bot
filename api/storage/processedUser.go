@@ -26,7 +26,7 @@ func (pus ProcessedUserStorage) GetAll(page uint) ([]model.ProcessedUser, error)
 	return users, nil
 }
 
-// GetAll returns all the users by job id
+// GetByJob returns all the users by job id
 func (pus ProcessedUserStorage) GetByJob(jobID, page uint) ([]model.ProcessedUser, error) {
 	// page size is 10
 	offset := (page - 1) * 10
@@ -43,7 +43,7 @@ func (pus ProcessedUserStorage) GetByJob(jobID, page uint) ([]model.ProcessedUse
 	return users, nil
 }
 
-// GetOne user by id
+// GetOne fetches a user by id
 func (pus ProcessedUserStorage) GetOne(id uint) (*model.ProcessedUser, error) {
 	var user model.ProcessedUser
 	err := model.DB.Order("id desc").Preload("Job").Where("id=?", id).Find(&user).Error
@@ -53,7 +53,7 @@ func (pus ProcessedUserStorage) GetOne(id uint) (*model.ProcessedUser, error) {
 	return &user, nil
 }
 
-// Get user by username
+// GetByUsername fetches a user by username
 func (pus ProcessedUserStorage) GetByUsername(username string) (*model.ProcessedUser, error) {
 	var user model.ProcessedUser
 	err := model.DB.Order("id desc").Where("username=?", username).Find(&user).Error
@@ -63,7 +63,7 @@ func (pus ProcessedUserStorage) GetByUsername(username string) (*model.Processed
 	return &user, nil
 }
 
-// save a processed user into database
+// Insert saves a processed user to the database
 func (pus ProcessedUserStorage) Insert(user model.ProcessedUser) error {
 	tx := model.DB.Begin()
 	if err := tx.Save(&user).Omit("job").Error; err != nil {
@@ -83,6 +83,7 @@ type ProcessedUserUpdater struct {
 	updates         map[string]interface{}
 }
 
+// NewProcessedUserUpdater returns a new ProcessedUserUpdater struct
 func (p ProcessedUserStorage) NewProcessedUserUpdater(userID uint) *ProcessedUserUpdater {
 	return &ProcessedUserUpdater{
 		ProcessedUserID: userID,
@@ -90,11 +91,13 @@ func (p ProcessedUserStorage) NewProcessedUserUpdater(userID uint) *ProcessedUse
 	}
 }
 
+// Successful sets the updater for the 'successful' column
 func (a *ProcessedUserUpdater) Successful(f int64) *ProcessedUserUpdater {
 	a.updates["successful"] = f
 	return a
 }
 
+// Update commits the updates to the database
 func (a *ProcessedUserUpdater) Update(tx *gorm.DB) error {
 	if tx == nil {
 		tx = model.DB

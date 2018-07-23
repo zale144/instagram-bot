@@ -20,14 +20,13 @@ func (m *Session) Get(ctx context.Context, req *proto.SessionRequest, rsp *proto
 	})
 	if err != nil {
 		log.Println(err)
-		rsp.Error = err.Error()
+		return err
 	}
-	return err
+	return nil
 }
 
 // Remove handles the request to remove a session from cache
 func (m *Session) Remove(ctx context.Context, req *proto.SessionRequest, rsp *proto.SessionResponse) error {
 	service.Remove(req.Account)
-	rsp.Error = ""
 	return nil
 }

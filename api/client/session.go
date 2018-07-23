@@ -10,6 +10,7 @@ import (
 
 type Session struct{}
 
+// FollowedUsers requests all followed users, from the microservice 'session'
 func (s Session) FollowedUsers(account string) ([]*sess.User, error) {
 	sClient := sess.NewInstaService("session", handlers.Srv.Client())
 	rsp, err := sClient.FollowedUsers(context.Background(), &sess.UserReq{
@@ -22,6 +23,7 @@ func (s Session) FollowedUsers(account string) ([]*sess.User, error) {
 	return rsp.Users, nil
 }
 
+// UserInfo requests user info, from the microservice 'session'
 func (s Session) UserInfo(account, username string) (*sess.User, error) {
 	sClient := sess.NewInstaService("session", handlers.Srv.Client())
 	rsp, err := sClient.UserInfo(context.Background(), &sess.UserReq{
@@ -35,6 +37,7 @@ func (s Session) UserInfo(account, username string) (*sess.User, error) {
 	return rsp.User, nil
 }
 
+// Message sends a message request to the microservice 'session'
 func (s Session) Message(req *sess.MessageRequest) (string, error) {
 	sClient := sess.NewInstaService("session", handlers.Srv.Client())
 	sRsp, err := sClient.Message(context.TODO(), req)
@@ -45,6 +48,8 @@ func (s Session) Message(req *sess.MessageRequest) (string, error) {
 	return sRsp.Response, nil
 }
 
+// UsersByHashtag sends a request to the microservice 'session'
+// to process all users associated with the provided hashtag
 func (s Session) UsersByHashtag(req *sess.UserReq) ([]*sess.User, error) {
 	sClient := sess.NewInstaService("session", handlers.Srv.Client())
 	sRsp, err := sClient.UsersByHashtag(context.TODO(), req)
@@ -55,6 +60,7 @@ func (s Session) UsersByHashtag(req *sess.UserReq) ([]*sess.User, error) {
 	return sRsp.Users, nil
 }
 
+// Follow sends a request to the microservice 'session', to follow the specific user
 func (s Session) Follow(account, username string) (*sess.User, error) {
 	sClient := sess.NewInstaService("session", handlers.Srv.Client())
 	sRsp, err := sClient.Follow(context.TODO(), &sess.UserReq{

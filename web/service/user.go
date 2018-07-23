@@ -11,7 +11,9 @@ import (
 
 type UserService struct{}
 
-// get profile info
+// GetProfile renders the page where basic profile info is shown
+// it is consumed by the 'htmlToimage' microservice,
+// to generate an image out of the html page
 func (ur UserService) GetProfile(c echo.Context) error {
 	account := c.Param("account")
 	username := c.Param("user")

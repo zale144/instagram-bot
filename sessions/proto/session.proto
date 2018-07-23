@@ -21,7 +21,7 @@ message SessionRequest {
 }
 
 message SessionResponse {
-	string error = 1;
+	string account = 1;
 }
 
 message Users {
@@ -57,5 +57,4 @@ message MessageRequest {
 
 message MessageResponse {
 	string response = 1;
-	string error = 2;
 }

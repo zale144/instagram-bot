@@ -31,6 +31,9 @@ services:
     environment:
       MICRO_REGISTRY: "consul"
       MICRO_REGISTRY_ADDRESS: "consul"
+      DB_USER: "test"
+      DB_PASS: "test"
+      DB_NAME: "insta_db"
       WEB_HOST: "http://localhost:4040"
       API_PORT: 4041
       DEBUG: 1
@@ -72,9 +75,9 @@ services:
     depends_on:
     - consul
     environment:
-      POSTGRES_DB: insta_db
       POSTGRES_USER: test
       POSTGRES_PASSWORD: test
+      POSTGRES_DB: insta_db
     networks:
       backend:
         aliases:

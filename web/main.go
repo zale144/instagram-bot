@@ -44,7 +44,7 @@ func main() {
 	e.POST("/login", service.AccountService{}.Login)
 	e.GET("/logout", service.AccountService{}.Logout)
 	e.GET("/calling-card/:user", service.UserService{}.CallingCard)      // for sharing
-	e.GET("/user-info/:account/:user", service.UserService{}.GetProfile) // for html2image
+	e.GET("/user-info/:account/:user", service.UserService{}.GetProfile) // for htmlToimage
 
 	// ***************** private ***************************
 	a := e.Group("/admin")

@@ -8,16 +8,14 @@ import (
 	"github.com/zale144/instagram-bot/sessions/service"
 
 	micro "github.com/micro/go-micro"
-	"os"
 	"github.com/zale144/instagram-bot/sessions/model"
+	"os"
 )
 
 func main() {
 
 	model.RpcURI = os.Getenv("RPC_URI")
-	if model.RpcURI == "" {
-		model.RpcURI = "http://localhost:4000"
-	}
+
 	// start the Sessions cache management
 	go service.Sessions()
 

@@ -13,6 +13,7 @@ var (
 	//DE, _ = time.LoadLocation("Europe/Berlin")
 )
 
+// openDB prepares a db connection for postgres
 func openDB() (*gorm.DB, error) {
 	if DB != nil {
 		return DB, nil
@@ -28,6 +29,7 @@ func openDB() (*gorm.DB, error) {
 	return DB, nil
 }
 
+// InitDB adds tables if needed and sets the log mode
 func InitDB() error {
 	_, err := openDB()
 	if err != nil {

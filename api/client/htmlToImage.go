@@ -10,6 +10,7 @@ import (
 
 type HtmlToImage struct{}
 
+// Process sends a request to 'htmltoimage' microservice to process a single user
 func (h HtmlToImage) Process(options htmlToImage.ImageRequest) (*htmlToImage.ImageResponse, error) {
 	hClient := htmlToImage.NewHtmlToImageService("htmltoimage", handlers.Srv.Client())
 	hResp, err := hClient.Process(context.TODO(), &options)

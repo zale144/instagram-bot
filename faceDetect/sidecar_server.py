@@ -13,6 +13,4 @@ def application(request):
 
 if __name__ == '__main__':
     host = os.environ['RPC_URI']
-    if host == '':
-        host = "localhost"
     run_simple(host, 4000, application)

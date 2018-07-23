@@ -10,10 +10,15 @@ import (
 	"github.com/labstack/echo/middleware"
 	"github.com/zale144/instagram-bot/api/handlers"
 	"os"
+	"fmt"
 )
 
 var (
-	dbInfo = flag.String("db-info", "postgres://test:test@db/insta_db?sslmode=disable", "database connection string")
+	dbUser = os.Getenv("DB_USER")
+	dbPass = os.Getenv("DB_PASS")
+	dbName = os.Getenv("DB_NAME")
+	dbConnString = fmt.Sprintf("postgres://%s:%s@db/%s?sslmode=disable",	dbUser, dbPass, dbName)
+	dbInfo = flag.String("db-info", dbConnString, "database connection string")
 	pImages   = flag.String("pImages", "files/images/profiles", "path to profile images folder")
 )
 

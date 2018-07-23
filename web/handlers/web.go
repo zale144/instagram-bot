@@ -11,6 +11,7 @@ var Srv micro.Service
 
 type service struct{}
 
+// RegisterService registers the 'web' microservice
 func RegisterService() {
 	Srv = micro.NewService(
 		micro.Name("web"),

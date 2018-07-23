@@ -10,6 +10,7 @@ import (
 
 type Session struct{}
 
+// UserInfo retrieves the user info from the 'session' microservice
 func (s Session) UserInfo(account, username string) (*sess.User, error) {
 	sClient := sess.NewInstaService("session", handlers.Srv.Client())
 	rsp, err := sClient.UserInfo(context.Background(), &sess.UserReq{

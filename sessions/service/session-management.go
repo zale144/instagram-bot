@@ -38,7 +38,7 @@ var (
 	clears  = make(chan *ClearReq)
 )
 
-// manage multiple sessions connections with a goroutine
+// Sessions is a goroutine for caching Instagram connections
 func Sessions() {
 	sessions := make(map[string]*Session)
 	for {
@@ -49,17 +49,18 @@ func Sessions() {
 			sessions[write.Key] = write.Val
 			write.Resp <- true
 		case remove := <-removes:
-			delete(sessions, remove.Key)    // delete value for key from map
-			_, resp := sessions[remove.Key] // check if key still found in map
+			delete(sessions, remove.Key)
+			_, resp := sessions[remove.Key]
 			remove.Resp <- !resp
-		case clear := <-clears: // clear operation requested
-			sessions = make(map[string]*Session) // re-instantiate the  map
-			clear.Resp <- len(sessions) == 0     // send true if map is empty now
+		case clear := <-clears:
+			sessions = make(map[string]*Session)
+			clear.Resp <- len(sessions) == 0
 		}
 	}
 }
 
-// get sessions by account struct
+// GetSession attempts to fetch the session from cache,
+// if not found in cache, it will create a new session
 func GetSession(account *model.Account) (*Session, error) { // return sessions
 	read := &ReadReq{ // instantiate a read request
 		Key:  account.Username,
@@ -78,7 +79,7 @@ func GetSession(account *model.Account) (*Session, error) { // return sessions
 	return ret, nil
 }
 
-// add sessions to map
+// SaveSession adds sessions to the cache
 func SaveSession(session *Session, username string) {
 	write := &WriteReq{ // instantiate a write request
 		Key:  username,
@@ -90,7 +91,7 @@ func SaveSession(session *Session, username string) {
 	log.Printf("Written '%s' to sessions map\n", write.Key)
 }
 
-// remove item from sessions map
+// Remove removes the session from cache
 func Remove(name string) {
 	remove := &RemoveReq{ // instantiate a remove request
 		Key:  name,
@@ -101,7 +102,7 @@ func Remove(name string) {
 	log.Printf("Removed '%s' from sessions map\n", remove.Key)
 }
 
-// clear the sessions map
+// Clear clears the sessions cache
 func Clear() {
 	clear := &ClearReq{ // instantiate a clear request
 		Resp: make(chan bool),
