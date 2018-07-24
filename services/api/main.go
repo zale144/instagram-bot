@@ -64,6 +64,7 @@ func main() {
 	e.Logger.Fatal(e.Start(":8081"))
 }
 
+// regService registers the 'api' microservice
 func regService()  {
 	model.Service = k8s.NewService(
 		micro.Name("api"),

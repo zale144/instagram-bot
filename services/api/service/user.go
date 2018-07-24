@@ -123,10 +123,6 @@ func (ur UserService) ProcessUsersByHashtag(c echo.Context) error {
 			Hashtag: params["hashtag"],
 			Limit: int64(limit),
 		})
-		fmt.Printf("GOT %v USERS\n", len(users))
-		for _, u := range users {
-			fmt.Println(u.Username)
-		}
 		for _, u := range users {
 			processedUser, err := storage.ProcessedUserStorage{}.GetByUsername(u.Username)
 			if err != nil {
@@ -159,6 +155,9 @@ func (ur UserService) ProcessUsersByHashtag(c echo.Context) error {
 			user := model.ProcessedUser{Username: params["username"], Job: job, JobID: job.ID, ProcessedAt: time.Now().Unix()}
 
 			_, err = ur.Process(params)
+			if err != nil {
+				log.Println(err)
+			}
 			user.Successful = err == nil
 			storage.ProcessedUserStorage{}.Insert(user)
 			fmt.Printf("processed: %s\n", u.Username)
