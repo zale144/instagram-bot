@@ -64,8 +64,6 @@ func main() {
 		}
 		return c.Render(http.StatusOK, "home", data)
 	})
-	//webPort := os.Getenv("WEB_PORT")
-
 
 	srvc := k8s.NewService(
 		web.Name("web"),
@@ -73,16 +71,12 @@ func main() {
 		web.Handler(e),
 	)
 	srvc.Init()
-	//proto.RegisterWebHandler(Srv.Client(), new(service))
-	os.Setenv("MICRO_REGISTRY", "kubernetes")
-	os.Setenv("MICRO_SELECTOR", "static")
 	client.DefaultClient = cli.NewClient()
 	server.DefaultServer = srv.NewServer()
 
 	if err := srvc.Run(); err != nil {
 		log.Fatal(err)
 	}
-	//e.Logger.Fatal(e.Start(":" + webPort))
 }
 
 // authMiddleware is used to check if user is logged in

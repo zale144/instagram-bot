@@ -1,19 +1,4 @@
 ---
-kind: Service
-apiVersion: v1
-metadata:
-    name: session
-    namespace: default
-    labels:
-        app: sessions
-spec:
-    ports:
-    - protocol: "TCP"
-      port: 8080
-    selector:
-        app: sessions
-
----
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
@@ -33,12 +18,9 @@ spec:
       		"--server_address=0.0.0.0:8080",
       		"--broker_address=0.0.0.0:10001",
       		"--selector=static",
-      		"--server=kubernetes"
       	]
         image: livelance/sessions:v0.0.1
         env:
-          - name:  MICRO_REGISTRY
-            value:  kubernetes
           - name: RPC_URI
             value: "http://sidecar:4000"
         ports:

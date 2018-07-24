@@ -7,9 +7,11 @@ metadata:
     labels:
         app: api
 spec:
+    type: NodePort
     ports:
     - protocol: "TCP"
-      port: 8080
+      port: 8081
+      nodePort: 30002
     selector:
         app: api
 
@@ -33,14 +35,11 @@ spec:
       		"--server_address=0.0.0.0:8080",
       		"--broker_address=0.0.0.0:10001",
       		"--selector=static",
-      		"--server=kubernetes"
       	]
         image: livelance/api:v0.0.1
         env:
-          - name:  MICRO_REGISTRY
-            value:  kubernetes
           - name: API_HOST
-            value: "http://localhost:30002"
+            value: "http://192.168.99.100:30002"
           - name: DB_USER
             value: "test"
           - name: DB_PASS
@@ -49,4 +48,6 @@ spec:
             value: "insta_db"
         ports:
         - containerPort: 8080
+          name: srvc-port
+        - containerPort: 8081
           name: api-port

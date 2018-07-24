@@ -68,12 +68,9 @@ func main() {
 	api.GET("/search/:user", service.UserService{}.Search)
 	api.GET("/follow/:user", service.UserService{}.Follow)
 
-	os.Setenv("MICRO_REGISTRY", "kubernetes")
-	os.Setenv("MICRO_SELECTOR", "static")
+	go regService()
 
-	regService()
-
-	//e.Logger.Fatal(e.Start(":8081"))
+	e.Logger.Fatal(e.Start(":8081"))
 }
 
 func regService()  {
@@ -83,8 +80,8 @@ func regService()  {
 	)
 
 	srvc.Init()
-	proto.RegisterLoginServiceHandler(server.DefaultServer, &handlers.LoginService{})
-	proto.RegisterApiHandler(server.DefaultServer, &handlers.Api{})
+	proto.RegisterLoginServiceHandler(srvc.Server(), &handlers.LoginService{})
+	proto.RegisterApiHandler(srvc.Server(), &handlers.Api{})
 
 	client.DefaultClient = cli.NewClient()
 	server.DefaultServer = srv.NewServer()

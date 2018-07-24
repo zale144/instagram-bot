@@ -10,7 +10,7 @@ import (
 
 	"github.com/dchest/authcookie"
 	"github.com/labstack/echo"
-	"github.com/zale144/instagram-bot/api/proto"
+	api "github.com/zale144/instagram-bot/api/proto"
 	sess "github.com/zale144/instagram-bot/sessions/proto"
 	"github.com/zale144/instagram-bot/web/model"
 	"github.com/micro/go-micro/client"

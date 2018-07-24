@@ -35,12 +35,11 @@ spec:
       		"--server_address=0.0.0.0:8080",
       		"--broker_address=0.0.0.0:10001",
       		"--selector=static",
-      		"--server=kubernetes"
       	]
         image: livelance/web:v0.0.1
         env:
           - name: API_HOST
-            value: "http://localhost:4041"
+            value: "http://192.168.99.100:30002"
         ports:
         - containerPort: 8080
           name: web-port
