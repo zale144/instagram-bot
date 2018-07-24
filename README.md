@@ -98,11 +98,14 @@ The login request happens like this,
 - The JWT token is then saved to your browser's local storage. This is how you will have authorization
     to access the **api** as a web service
 
-** Background image selected by face detection
+## Background image selected by face detection
 
 Besides the username, full name, profile picture, biography, **session** gets user's media from Instagram API.
 To choose a suitable background image for the fake profile image, criteria will be followed, like if it's
 a landscape image, if it's a picture of the user (if user is tagged in the picture), we will also detect faces
-in the image. To achieve this, **session** calls the **facedetect** microservice by RPC with a URL to the image
-as parameter. **facedetect** returns the number of faces it found in that image. **facedetect** is a service
-written in Python, and it uses machine learning with OpenCV for detecting faces in images.
+in the image. To achieve this,
+
+- **session** calls the **facedetect** microservice by RPC with a URL to the image as parameter.
+- **facedetect** returns the number of faces it found in that image.
+- **facedetect** is a microservice written in Python, that runs a simple RPC server
+    and uses machine learning with OpenCV for detecting faces in images.
