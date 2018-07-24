@@ -126,6 +126,14 @@
   revision = "3d2263bb092286dde294a31049c92665f8373820"
 
 [[projects]]
+  digest = "1:7984d4f0cdaf14595e27a91315ee2b8ac12f1ac53e3e2ee53ca90e1ddb4da7f1"
+  name = "github.com/micro/go-grpc"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "52024085c07e420ed8795c95006255a75feb500e"
+  version = "v0.3.0"
+
+[[projects]]
   branch = "master"
   digest = "1:1ba6e7291c93f36a9eef6628caaed64a82b1da2508d01f6347c7936f5c2531f6"
   name = "github.com/micro/go-log"
@@ -134,9 +142,10 @@
   revision = "cbfa9447f9b655f8e66583237e51f40ca9bff860"
 
 [[projects]]
-  digest = "1:692bc5cf41de97c8904bb71644aa2bec3432c67827afd416260169a60443ef8e"
+  digest = "1:4f7d2b940ee49ead5fc6dd8e7c5ed3495f506215892af117438ddb54eed4ce72"
   name = "github.com/micro/go-micro"
   packages = [
+    ".",
     "broker",
     "broker/codec",
     "broker/codec/json",
@@ -189,18 +198,10 @@
   revision = "a581a57b513351792b9f21fc8b95d87b1c5a95da"
 
 [[projects]]
-  digest = "1:28b581dd6d772a1e8c1576e0f0e8ac1e87fd16eae35b197c22a9ee5f39a0d619"
-  name = "github.com/micro/go-web"
-  packages = ["."]
-  pruneopts = "UT"
-  revision = "8373ea64a8063743652142796015afdf090d98db"
-  version = "v0.4.0"
-
-[[projects]]
   branch = "master"
-  digest = "1:f065cd4a5e4e5b0ad60138191e26733f2d715f6594bc253e39d9635b8e8ed0ce"
+  digest = "1:caaeb6679bbeaec0630b9cfd0bcb797762ec36525e7ef322f91e034458b5fd4b"
   name = "github.com/micro/kubernetes"
-  packages = ["go/web"]
+  packages = ["go/micro"]
   pruneopts = "UT"
   revision = "e0f53bfc450e56427b14023e0f4f00d71da1ec7c"
 
@@ -214,12 +215,11 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:99156bd36afc60a1f39cc8a03084e0985b1402ba5dd95df7c960df9b05df108b"
+  digest = "1:de068438dbdd3504d5fd65df7b1904d828c5ba38b3eec1efe99b27700ba5ce4a"
   name = "github.com/micro/util"
   packages = [
     "go/lib/addr",
     "go/lib/grpc",
-    "go/lib/http",
     "go/lib/net",
     "go/lib/tls",
   ]
@@ -416,12 +416,10 @@
     "github.com/golang/protobuf/proto",
     "github.com/labstack/echo",
     "github.com/labstack/echo/middleware",
+    "github.com/micro/go-micro",
     "github.com/micro/go-micro/client",
     "github.com/micro/go-micro/server",
-    "github.com/micro/go-plugins/client/grpc",
-    "github.com/micro/go-plugins/server/grpc",
-    "github.com/micro/go-web",
-    "github.com/micro/kubernetes/go/web",
+    "github.com/micro/kubernetes/go/micro",
     "github.com/zale144/instagram-bot/api/proto",
     "github.com/zale144/instagram-bot/sessions/proto",
   ]

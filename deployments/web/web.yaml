@@ -1,21 +1,3 @@
----
-kind: Service
-apiVersion: v1
-metadata:
-    name: web
-    namespace: default
-    labels:
-        app: web
-spec:
-    type: NodePort
-    ports:
-    - protocol: "TCP"
-      port: 8080
-      nodePort: 30001
-    selector:
-        app: web
-
----
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
@@ -42,4 +24,6 @@ spec:
             value: "http://192.168.99.100:30002"
         ports:
         - containerPort: 8080
+          name: srvc-port
+        - containerPort: 8081
           name: web-port

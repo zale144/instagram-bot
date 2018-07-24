@@ -5,14 +5,14 @@ import (
 	"log"
 
 	htmlToImage "github.com/zale144/instagram-bot/htmlToimage/proto"
-	"github.com/micro/go-micro/client"
+	"github.com/zale144/instagram-bot/api/model"
 )
 
 type HtmlToImage struct{}
 
 // Process sends a request to 'htmltoimage' microservice to process a single user
 func (h HtmlToImage) Process(options htmlToImage.ImageRequest) (*htmlToImage.ImageResponse, error) {
-	hClient := htmlToImage.NewHtmlToImageService("htmltoimage", client.DefaultClient)
+	hClient := htmlToImage.NewHtmlToImageService("htmltoimage", model.Service.Client())
 	hResp, err := hClient.Process(context.TODO(), &options)
 	if err != nil {
 		log.Println(err)

@@ -5,14 +5,14 @@ import (
 	"log"
 
 	sess "github.com/zale144/instagram-bot/sessions/proto"
-	"github.com/micro/go-micro/client"
+	"github.com/zale144/instagram-bot/api/model"
 )
 
 type Session struct{}
 
 // FollowedUsers requests all followed users, from the microservice 'session'
 func (s Session) FollowedUsers(account string) ([]*sess.User, error) {
-	sClient := sess.NewInstaService("session", client.DefaultClient)
+	sClient := sess.NewInstaService("session", model.Service.Client())
 	rsp, err := sClient.FollowedUsers(context.Background(), &sess.UserReq{
 		Account: account,
 	})
@@ -25,7 +25,7 @@ func (s Session) FollowedUsers(account string) ([]*sess.User, error) {
 
 // UserInfo requests user info, from the microservice 'session'
 func (s Session) UserInfo(account, username string) (*sess.User, error) {
-	sClient := sess.NewInstaService("session", client.DefaultClient)
+	sClient := sess.NewInstaService("session", model.Service.Client())
 	rsp, err := sClient.UserInfo(context.Background(), &sess.UserReq{
 		Account:  account,
 		Username: username,
@@ -39,7 +39,7 @@ func (s Session) UserInfo(account, username string) (*sess.User, error) {
 
 // Message sends a message request to the microservice 'session'
 func (s Session) Message(req *sess.MessageRequest) (string, error) {
-	sClient := sess.NewInstaService("session", client.DefaultClient)
+	sClient := sess.NewInstaService("session", model.Service.Client())
 	sRsp, err := sClient.Message(context.TODO(), req)
 	if err != nil {
 		log.Println(err)
@@ -51,7 +51,7 @@ func (s Session) Message(req *sess.MessageRequest) (string, error) {
 // UsersByHashtag sends a request to the microservice 'session'
 // to process all users associated with the provided hashtag
 func (s Session) UsersByHashtag(req *sess.UserReq) ([]*sess.User, error) {
-	sClient := sess.NewInstaService("session", client.DefaultClient)
+	sClient := sess.NewInstaService("session", model.Service.Client())
 	sRsp, err := sClient.UsersByHashtag(context.TODO(), req)
 	if err != nil {
 		log.Println(err)
@@ -62,7 +62,7 @@ func (s Session) UsersByHashtag(req *sess.UserReq) ([]*sess.User, error) {
 
 // Follow sends a request to the microservice 'session', to follow the specific user
 func (s Session) Follow(account, username string) (*sess.User, error) {
-	sClient := sess.NewInstaService("session", client.DefaultClient)
+	sClient := sess.NewInstaService("session", model.Service.Client())
 	sRsp, err := sClient.Follow(context.TODO(), &sess.UserReq{
 		Account:  account,
 		Username: username,

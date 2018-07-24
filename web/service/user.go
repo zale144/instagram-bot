@@ -7,7 +7,6 @@ import (
 	"github.com/labstack/echo"
 	"github.com/zale144/instagram-bot/web/model"
 	"context"
-	"github.com/micro/go-micro/client"
 )
 
 type UserService struct{}
@@ -19,7 +18,7 @@ func (ur UserService) GetProfile(c echo.Context) error {
 	account := c.Param("account")
 	username := c.Param("user")
 
-	sClient := sess.NewInstaService("session", client.DefaultClient)
+	sClient := sess.NewInstaService("session", model.Service.Client())
 	rsp, err := sClient.UserInfo(context.Background(), &sess.UserReq{
 		Account:  account,
 		Username: username,

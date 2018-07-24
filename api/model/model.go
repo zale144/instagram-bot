@@ -6,6 +6,7 @@ import (
 
 	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/jinzhu/gorm"
+	"github.com/micro/go-micro"
 )
 
 const (
@@ -16,6 +17,7 @@ const (
 
 var (
 	WebURL string
+	Service micro.Service
 )
 
 // jwtCustomClaims are custom claims extending default ones.

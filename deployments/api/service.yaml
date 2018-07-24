@@ -1,0 +1,30 @@
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: apiweb
+  namespace: default
+  labels:
+      app: api
+spec:
+  type: NodePort
+  ports:
+  - protocol: "TCP"
+    port: 8081
+    nodePort: 30002
+  selector:
+      app: api
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: api
+  labels:
+    app: api
+spec:
+  ports:
+  - port: 8080
+    protocol: TCP
+  selector:
+    app: api

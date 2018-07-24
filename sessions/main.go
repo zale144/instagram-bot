@@ -10,10 +10,6 @@ import (
 	"github.com/micro/go-micro"
 	"github.com/zale144/instagram-bot/sessions/model"
 	"os"
-	"github.com/micro/go-micro/client"
-	"github.com/micro/go-micro/server"
-	cli "github.com/micro/go-plugins/client/grpc"
-	srv "github.com/micro/go-plugins/server/grpc"
 )
 
 func main() {
@@ -25,15 +21,11 @@ func main() {
 
 	serv := k8s.NewService(
 		micro.Name("session"),
-		micro.Version("latest"),
 	)
 	serv.Init()
 
 	proto.RegisterSessionHandler(serv.Server(), &handlers.Session{})
 	proto.RegisterInstaHandler(serv.Server(), &handlers.Insta{})
-
-	client.DefaultClient = cli.NewClient()
-	server.DefaultServer = srv.NewServer()
 
 	if err := serv.Run(); err != nil {
 		log.Fatal(err)

@@ -1,15 +1,3 @@
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: db
-  namespace: default
-spec:
-  ports:
-  - port: 5432
-  selector:
-    app: db
----
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
@@ -19,22 +7,23 @@ spec:
   template:
     metadata:
       labels:
-        app: db
+        app: postgres
     spec:
       containers:
       - image: "postgres:10.4"
         name: postgres
-        envFrom:
-        - configMapRef:
-            name: db-config
+        env:
+          - name: POSTGRES_USER
+            value: postgres
+          - name: POSTGRES_DB
+            value: insta_db
         ports:
         - containerPort: 5432
           name: db-port
         volumeMounts:
-        - name: postgres-storage
+        - name: postgres-volume-mount
           mountPath: /var/lib/postgresql/data
       volumes:
-      - name: postgres-storage
-        gcePersistentDisk:
-          fsType: ext4
-          pdName: postgres-disk
+      - name: postgres-volume-mount
+        persistentVolumeClaim:
+          claimName: postgres-pvc

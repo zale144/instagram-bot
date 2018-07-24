@@ -9,35 +9,26 @@ import (
 	"github.com/labstack/echo/middleware"
 	"os"
 	k8s "github.com/micro/kubernetes/go/micro"
-	"github.com/micro/go-micro/client"
-	"github.com/micro/go-micro/server"
-	cli "github.com/micro/go-plugins/client/grpc"
-	srv "github.com/micro/go-plugins/server/grpc"
 	"github.com/zale144/instagram-bot/api/handlers"
 	proto "github.com/zale144/instagram-bot/api/proto"
 	"github.com/micro/go-micro"
+	"fmt"
 )
 
-/*var (
-	dbUser = os.Getenv("DB_USER")
-	dbPass = os.Getenv("DB_PASS")
-	dbName = os.Getenv("DB_NAME")
-	dbConnString = fmt.Sprintf("postgres://%s:%s@db/%s?sslmode=disable",	dbUser, dbPass, dbName)
-	dbInfo = flag.String("db-info", dbConnString, "database connection string")
-	pImages   = flag.String("pImages", "files/images/profiles", "path to profile images folder")
-)*/
-
 func main() {
-	//flag.Parse()
 
 	model.WebURL = os.Getenv("WEB_HOST")
 
-	/*model.DBInfo = *dbInfo
+	dbUser := os.Getenv("DB_USER")
+	dbPass := os.Getenv("DB_PASS")
+	dbName := os.Getenv("DB_NAME")
+	dbConnString := fmt.Sprintf("postgres://%s:%s@db/%s?sslmode=disable",	dbUser, dbPass, dbName)
+
+	model.DBInfo = dbConnString
 	err := model.InitDB()
 	if err != nil {
 		log.Fatalf("cannot initialize db: %v", err)
-		return
-	}*/
+	}
 
 	e := echo.New()
 
@@ -74,19 +65,16 @@ func main() {
 }
 
 func regService()  {
-	srvc := k8s.NewService(
+	model.Service = k8s.NewService(
 		micro.Name("api"),
 		micro.Version("latest"),
 	)
 
-	srvc.Init()
-	proto.RegisterLoginServiceHandler(srvc.Server(), &handlers.LoginService{})
-	proto.RegisterApiHandler(srvc.Server(), &handlers.Api{})
+	model.Service .Init()
+	proto.RegisterLoginServiceHandler(model.Service .Server(), &handlers.LoginService{})
+	proto.RegisterApiHandler(model.Service .Server(), &handlers.Api{})
 
-	client.DefaultClient = cli.NewClient()
-	server.DefaultServer = srv.NewServer()
-
-	if err := srvc.Run(); err != nil {
+	if err := model.Service.Run(); err != nil {
 		log.Fatal(err)
 	}
 }
