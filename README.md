@@ -2,7 +2,7 @@
 
 Instagram Bot is a demo app that shows how users can promote their website/platform to users on Instagram.
 
-Initially it was a monolith, but I've rewritten in to follow the Microservice architecture.
+Initially it was a monolith, but I've rewritten it to follow the Microservice architecture.
 
 
 ## Features
