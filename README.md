@@ -2,10 +2,8 @@
 
 Instagram Bot is a demo app that shows how users can promote their website/platform to users on Instagram.
 
-It's written following the Microservice architecture.
-Instegram Bot uses [Go-micro](https://github.com/micro/go-micro)
+Initially it was a monolith, but I've rewritten in to follow the Microservice architecture.
 
-Together they provide the foundations for a microservice platform.
 
 ## Features
 
@@ -29,7 +27,7 @@ Together they provide the foundations for a microservice platform.
 - [OpenCV](https://opencv.org)
 - [whktmltopdf](https://wkhtmltopdf.org)
 - [PostgreSQL](https://www.postgresql.org)
-- [Consul(deprecated)](https://www.consul.io)
+- [Consul (before moving to Kubernetes)](https://www.consul.io)
 - [React.js](https://reactjs.org)
 - [Gorm](http://gorm.io)
 - [dep](https://golang.github.io/dep)
