@@ -45,25 +45,25 @@ on your website would potentially look like. It will show their pictures and bas
 profile.
 
 To achieve this,
-    - A request is sent to the **api** microservice to process the user by username
-    - The **api** microservice sends a request to **htmlToImage** microservice to create an image of your
-        HTML template with that user's pictures and info applied to it.
-    - **htmlToImage** does this by calling the **wkhtmltoimage** binary and passing
-        the image parameters and the URL to the fake HTML profile as input
-    - **wkhtmltoimage** consumes the URL and runs a detached browser to read the fake HTML profile
-    - The fake HTML profile will be served from the **web** microservice.
-    - When requested, **web** composes that page by applying user info it fetches from **session**
-        to an HTML template (in the future this template should be customizable)
-    - **session** gets basic info from the user's Instagram profile, like the profile image, biography,
-        username, full name, media feed.
-    - **session** selects the background image according to criteria: it's landscape, it's a picture of the user,
-        or at least it's a picture of a person
-    - To detect if it's a picture of a person, it calls the **facedetect** microservice with a link to the image.
-    - The image created by **htmlToImage** is returned to **api** and saved as a file.
-    - Then, **api** continues by calling **session** to send an Instagram Direct message to the user with the link
-        to a page that should (TODO) redirect to your registration page, with that generated image of the
-        fake profile as an OG tag, which will show up nicely in the message.
-    - This page will again be served from the **web** service.
+- A request is sent to the **api** microservice to process the user by username
+- The **api** microservice sends a request to **htmlToImage** microservice to create an image of your
+    HTML template with that user's pictures and info applied to it.
+- **htmlToImage** does this by calling the **wkhtmltoimage** binary and passing
+    the image parameters and the URL to the fake HTML profile as input
+- **wkhtmltoimage** consumes the URL and runs a detached browser to read the fake HTML profile
+- The fake HTML profile will be served from the **web** microservice.
+- When requested, **web** composes that page by applying user info it fetches from **session**
+    to an HTML template (in the future this template should be customizable)
+- **session** gets basic info from the user's Instagram profile, like the profile image, biography,
+    username, full name, media feed.
+- **session** selects the background image according to criteria: it's landscape, it's a picture of the user,
+    or at least it's a picture of a person
+- To detect if it's a picture of a person, it calls the **facedetect** microservice with a link to the image.
+- The image created by **htmlToImage** is returned to **api** and saved as a file.
+- Then, **api** continues by calling **session** to send an Instagram Direct message to the user with the link
+    to a page that should (TODO) redirect to your registration page, with that generated image of the
+    fake profile as an OG tag, which will show up nicely in the message.
+- This page will again be served from the **web** service.
 
 ## Batch process users based on a hashtag
 
@@ -74,11 +74,11 @@ on Instagram with the invitation to your website, with a custom message. Meaning
 just like [this](#send-invites-to-your-website-to-instagram-users)
 
 To achieve this,
-    - A request is sent to **api**, to create a Job.
-    - The job will be saved to the database and run in the background, so you don't have to wait around.
-    - The job will: get all users by hashtag within provided limit.
-    - Process them each by each if they fulfill two conditions: they're not processed yet, the user is not you.
-    - Save the processed users the the database
+- A request is sent to **api**, to create a Job.
+- The job will be saved to the database and run in the background, so you don't have to wait around.
+- The job will: get all users by hashtag within provided limit.
+- Process them each by each if they fulfill two conditions: they're not processed yet, the user is not you.
+- Save the processed users the the database
 
 
 ## Follow Instagram users
@@ -91,12 +91,12 @@ follow them by clicking on the 'Follow' button.
 In order to login, just provide your Instagram account credentials (they're not secretly saved to a database).
 The login request happens like this,
 
-    - A request is sent to **web** to create a cookie for you.
-    - **web** sends a call to **session** to create a session for you
-    - **session** calls the Instagram API to log you in and cache the session to a map
-    - **web** calls **api** to create a JWT token for you
-    - The JWT token is then saved to your browser's local storage. This is how you will have authorization
-        to access the **api** as a web service
+- A request is sent to **web** to create a cookie for you.
+- **web** sends a call to **session** to create a session for you
+- **session** calls the Instagram API to log you in and cache the session to a map
+- **web** calls **api** to create a JWT token for you
+- The JWT token is then saved to your browser's local storage. This is how you will have authorization
+    to access the **api** as a web service
 
 ** Background image selected by face detection
 
