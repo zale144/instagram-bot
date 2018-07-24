@@ -24,8 +24,8 @@ spec:
             value: "http://192.168.99.100:30001"
           - name: DB_USER
             value: "postgres"
-        #  - name: DB_PASS
-         #t   value: "test"
+          - name: DB_PASS
+            value: ""
           - name: DB_NAME
             value: "insta_db"
         ports:
