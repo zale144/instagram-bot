@@ -13,10 +13,10 @@ spec:
       containers:
       - name: api
         command: [
-      		"./instagram-bot.api",
-      		"--server_address=0.0.0.0:8080",
-      		"--broker_address=0.0.0.0:10001",
-      		"--selector=static",
+      	  "./instagram-bot.api",
+      	  "--server_address=0.0.0.0:8080",
+      	  "--broker_address=0.0.0.0:10001",
+      	  "--selector=static",
       	]
         image: livelance/api:v0.0.1
         env:
