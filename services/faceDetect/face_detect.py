@@ -13,11 +13,11 @@ def url_to_image(path):
 
 def number_of_faces(url):
     cascPath = "haarcascade_frontalface_default.xml"
-    # Create the haar cascade
+    # create the haar cascade
     faceCascade = cv2.CascadeClassifier(cascPath)
     img = url_to_image(url)
 
-    # Detect faces in the image
+    # detect faces in the image
     faces = faceCascade.detectMultiScale(
         img,
         scaleFactor=1.1,

@@ -17,7 +17,6 @@ import (
 	"github.com/zale144/instagram-bot/services/web/client"
 )
 
-
 func main() {
 
 	e := echo.New()
@@ -65,6 +64,7 @@ func main() {
 	e.Logger.Fatal(e.Start(":8081"))
 }
 
+// reqService registers the 'web' microservice
 func reqService()  {
 	model.Service = k8s.NewService(
 		micro.Name("web"),

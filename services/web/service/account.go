@@ -14,7 +14,10 @@ import (
 
 type AccountService struct{}
 
-// Login handles login requests
+// Login handles login requests by requesting 'session'
+// service to log into Instagram and save the session to cache.
+// It also requests 'api' service to create a JWT token,
+// for 'api' authorization
 func (ar AccountService) Login(c echo.Context) error {
 
 	username, password, ok := c.Request().BasicAuth()
@@ -55,7 +58,8 @@ func (ar AccountService) Login(c echo.Context) error {
 	})
 }
 
-// Logout handles logout requests
+// Logout handles logout requests. It expires the cookie and
+// logs the user out of Instagram by calling the 'session' service.
 func (ar AccountService) Logout(c echo.Context) error {
 	// expire the cookie
 	cookie := &http.Cookie{

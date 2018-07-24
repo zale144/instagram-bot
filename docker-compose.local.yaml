@@ -1,3 +1,5 @@
+# Deprecated - now using Kubernetes
+
 version: "3.6"
 services:
       

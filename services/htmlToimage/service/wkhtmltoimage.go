@@ -15,6 +15,7 @@ import (
 )
 
 var WebURI string
+
 // GenerateImage creates an image from an input.
 // It returns the image ([]byte) and any error encountered.
 func GenerateImage(options *proto.ImageRequest) ([]byte, error) {
