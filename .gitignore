@@ -1,5 +1,4 @@
 .vscode
-.idea
 services/htmlToimage/vendor
 services/htmlToimage/debug
 services/htmlToimage/htmlToimage
