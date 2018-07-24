@@ -3,7 +3,7 @@ services:
       
   web:
     image: instagram-bot/web
-    build: ./web
+    build: ./services/web
     depends_on:
     - consul
     networks:
@@ -22,7 +22,7 @@ services:
 
   api:
     image: instagram-bot/api
-    build: ./api
+    build: ./services/api
     depends_on:
     - db
     - consul
@@ -43,7 +43,7 @@ services:
 
   htmlToimage:
     image: instagram-bot/htmltoimage
-    build: ./htmlToimage
+    build: ./services/htmlToimage
     depends_on:
     - consul
     environment:
@@ -57,7 +57,7 @@ services:
 
   sessions:
     image: instagram-bot/sessions
-    build: ./sessions
+    build: ./services/sessions
     depends_on:
     - consul
     environment:
@@ -89,7 +89,7 @@ services:
 
   facedetect:
     image: instagram-bot/facedetect
-    build: ./faceDetect
+    build: ./services/faceDetect
     depends_on:
     - consul
     environment:
