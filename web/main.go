@@ -11,13 +11,19 @@ import (
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
 	sess "github.com/zale144/instagram-bot/sessions/proto"
-	"github.com/zale144/instagram-bot/web/handlers"
 	"github.com/zale144/instagram-bot/web/model"
 	"github.com/zale144/instagram-bot/web/service"
+	"fmt"
+	"github.com/micro/go-web"
+	k8s "github.com/micro/kubernetes/go/web"
+	"github.com/micro/go-micro/client"
+	cli "github.com/micro/go-plugins/client/grpc"
+	srv "github.com/micro/go-plugins/server/grpc"
+	"github.com/micro/go-micro/server"
 )
 
+
 func main() {
-	go handlers.RegisterService()
 
 	e := echo.New()
 
@@ -58,8 +64,25 @@ func main() {
 		}
 		return c.Render(http.StatusOK, "home", data)
 	})
-	webPort := os.Getenv("WEB_PORT")
-	e.Logger.Fatal(e.Start(":" + webPort))
+	//webPort := os.Getenv("WEB_PORT")
+
+
+	srvc := k8s.NewService(
+		web.Name("web"),
+		web.Version("latest"),
+		web.Handler(e),
+	)
+	srvc.Init()
+	//proto.RegisterWebHandler(Srv.Client(), new(service))
+	os.Setenv("MICRO_REGISTRY", "kubernetes")
+	os.Setenv("MICRO_SELECTOR", "static")
+	client.DefaultClient = cli.NewClient()
+	server.DefaultServer = srv.NewServer()
+
+	if err := srvc.Run(); err != nil {
+		log.Fatal(err)
+	}
+	//e.Logger.Fatal(e.Start(":" + webPort))
 }
 
 // authMiddleware is used to check if user is logged in
@@ -71,14 +94,15 @@ func authMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 			if login == "" {
 				return c.Redirect(http.StatusTemporaryRedirect, "/login")
 			}
-			client := sess.NewSessionService("session", handlers.Srv.Client())
-			rsp, err := client.Get(context.Background(), &sess.SessionRequest{
+			clt := sess.NewSessionService("session", client.DefaultClient)
+			rsp, err := clt.Get(context.Background(), &sess.SessionRequest{
 				Account: login,
 			})
-			if err != nil || rsp.Error != "" {
+			if err != nil {
 				service.AccountService{}.Logout(c)
 				return c.Redirect(http.StatusTemporaryRedirect, "/login")
 			}
+			fmt.Println(rsp.Account)
 			c.Request().Header.Set(model.HEADER_AUTH_USER_ID, login)
 			return next(c)
 		}

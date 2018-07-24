@@ -14,7 +14,7 @@ type Session struct{}
 
 // Get handles the get session request
 func (m *Session) Get(ctx context.Context, req *proto.SessionRequest, rsp *proto.SessionResponse) error {
-	_, err := service.GetSession(&model.Account{
+	s, err := service.GetSession(&model.Account{
 		Username: req.Account,
 		Password: req.Password,
 	})
@@ -22,6 +22,7 @@ func (m *Session) Get(ctx context.Context, req *proto.SessionRequest, rsp *proto
 		log.Println(err)
 		return err
 	}
+	rsp.Account = s.GetInsta().Account.Username
 	return nil
 }
 

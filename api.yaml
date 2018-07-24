@@ -1,0 +1,52 @@
+---
+kind: Service
+apiVersion: v1
+metadata:
+    name: api
+    namespace: default
+    labels:
+        app: api
+spec:
+    ports:
+    - protocol: "TCP"
+      port: 8080
+    selector:
+        app: api
+
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  namespace: default
+  name: apidepl
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: api
+    spec:
+      containers:
+      - name: api
+        command: [
+      		"./instagram-bot.api",
+      		"--server_address=0.0.0.0:8080",
+      		"--broker_address=0.0.0.0:10001",
+      		"--selector=static",
+      		"--server=kubernetes"
+      	]
+        image: livelance/api:v0.0.1
+        env:
+          - name:  MICRO_REGISTRY
+            value:  kubernetes
+          - name: API_HOST
+            value: "http://localhost:30002"
+          - name: DB_USER
+            value: "test"
+          - name: DB_PASS
+            value: "test"
+          - name: DB_NAME
+            value: "insta_db"
+        ports:
+        - containerPort: 8080
+          name: api-port

@@ -5,13 +5,10 @@ import (
 	"log"
 	"time"
 
-	jwt "github.com/dgrijalva/jwt-go"
-	micro "github.com/micro/go-micro"
+	"github.com/dgrijalva/jwt-go"
 	"github.com/zale144/instagram-bot/api/model"
 	proto "github.com/zale144/instagram-bot/api/proto"
 )
-
-var Srv micro.Service
 
 type Api struct{}
 
@@ -29,6 +26,7 @@ type LoginService struct{}
 
 // Login handles a login request for the api service
 func (l *LoginService) Login(ctx context.Context, req *proto.LoginReq, rsp *proto.LoginResp) error {
+	log.Println("GOT API LOGIN REQUEST")
 	claims := &model.JwtCustomClaims{
 		req.Username,
 		true,
@@ -48,7 +46,7 @@ func (l *LoginService) Login(ctx context.Context, req *proto.LoginReq, rsp *prot
 	return nil
 }
 
-// RegisterService registers the 'api' microservice
+/*// RegisterService registers the 'api' microservice
 func RegisterService() {
 	Srv = micro.NewService(
 		micro.Name("api"),
@@ -61,4 +59,4 @@ func RegisterService() {
 	if err := Srv.Run(); err != nil {
 		log.Fatal(err)
 	}
-}
+}*/

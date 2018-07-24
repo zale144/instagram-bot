@@ -6,10 +6,14 @@ import (
 	"github.com/zale144/instagram-bot/sessions/handlers"
 	proto "github.com/zale144/instagram-bot/sessions/proto"
 	"github.com/zale144/instagram-bot/sessions/service"
-
-	micro "github.com/micro/go-micro"
+	k8s "github.com/micro/kubernetes/go/micro"
+	"github.com/micro/go-micro"
 	"github.com/zale144/instagram-bot/sessions/model"
 	"os"
+	"github.com/micro/go-micro/client"
+	"github.com/micro/go-micro/server"
+	cli "github.com/micro/go-plugins/client/grpc"
+	srv "github.com/micro/go-plugins/server/grpc"
 )
 
 func main() {
@@ -19,16 +23,19 @@ func main() {
 	// start the Sessions cache management
 	go service.Sessions()
 
-	srv := micro.NewService(
+	serv := k8s.NewService(
 		micro.Name("session"),
 		micro.Version("latest"),
 	)
-	srv.Init()
+	serv.Init()
 
-	proto.RegisterSessionHandler(srv.Server(), &handlers.Session{})
-	proto.RegisterInstaHandler(srv.Server(), &handlers.Insta{})
+	proto.RegisterSessionHandler(serv.Server(), &handlers.Session{})
+	proto.RegisterInstaHandler(serv.Server(), &handlers.Insta{})
 
-	if err := srv.Run(); err != nil {
+	client.DefaultClient = cli.NewClient()
+	server.DefaultServer = srv.NewServer()
+
+	if err := serv.Run(); err != nil {
 		log.Fatal(err)
 	}
 

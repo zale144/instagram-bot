@@ -10,10 +10,10 @@ import (
 
 	"github.com/dchest/authcookie"
 	"github.com/labstack/echo"
-	api "github.com/zale144/instagram-bot/api/proto"
+	"github.com/zale144/instagram-bot/api/proto"
 	sess "github.com/zale144/instagram-bot/sessions/proto"
-	"github.com/zale144/instagram-bot/web/handlers"
 	"github.com/zale144/instagram-bot/web/model"
+	"github.com/micro/go-micro/client"
 )
 
 type AccountService struct{}
@@ -32,18 +32,18 @@ func (ar AccountService) Login(c echo.Context) error {
 	if username == "" || password == "" {
 		return echo.ErrUnauthorized
 	}
-	sClient := sess.NewSessionService("session", handlers.Srv.Client())
+	sClient := sess.NewSessionService("session", client.DefaultClient)
 	rsp, err := sClient.Get(context.TODO(), &sess.SessionRequest{
 		Account:  username,
 		Password: password,
 	})
-	if err != nil || rsp.Error != "" {
+	if err != nil {
 		c.Error(echo.NewHTTPError(http.StatusBadRequest, err.Error()))
 		return err
 	}
-	fmt.Printf("logged in as: %s\n", username)
+	fmt.Printf("logged in as: %s\n", rsp.Account)
 
-	aClient := api.NewLoginService("api", handlers.Srv.Client())
+	aClient := api.NewLoginService("api", client.DefaultClient)
 	aRsp, err := aClient.Login(context.TODO(), &api.LoginReq{
 		Username: username,
 	})
@@ -78,14 +78,15 @@ func (ar AccountService) Logout(c echo.Context) error {
 
 	user, err := GetUsernameFromCookie(&c)
 	if err == nil {
-		client := sess.NewSessionService("session", handlers.Srv.Client())
-		rsp, err := client.Remove(context.TODO(), &sess.SessionRequest{
+		clnt := sess.NewSessionService("session", client.DefaultClient)
+		rsp, err := clnt.Remove(context.TODO(), &sess.SessionRequest{
 			Account: user,
 		})
-		if err != nil || rsp.Error != "" {
+		if err != nil {
 			c.Error(echo.NewHTTPError(http.StatusBadRequest, err.Error()))
 			return err
 		}
+		fmt.Println(rsp.Account)
 	}
 
 	return c.Redirect(http.StatusSeeOther, "/login")

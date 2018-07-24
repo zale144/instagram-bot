@@ -1,0 +1,46 @@
+---
+kind: Service
+apiVersion: v1
+metadata:
+    name: web
+    namespace: default
+    labels:
+        app: web
+spec:
+    type: NodePort
+    ports:
+    - protocol: "TCP"
+      port: 8080
+      nodePort: 30001
+    selector:
+        app: web
+
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  namespace: default
+  name: webdepl
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: web
+    spec:
+      containers:
+      - name: web
+        command: [
+      		"./instagram-bot.web",
+      		"--server_address=0.0.0.0:8080",
+      		"--broker_address=0.0.0.0:10001",
+      		"--selector=static",
+      		"--server=kubernetes"
+      	]
+        image: livelance/web:v0.0.1
+        env:
+          - name: API_HOST
+            value: "http://localhost:4041"
+        ports:
+        - containerPort: 8080
+          name: web-port

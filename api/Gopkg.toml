@@ -49,6 +49,11 @@
   branch = "master"
   name = "github.com/zale144/instagram-bot"
 
+[[constraint]]
+  name = "github.com/micro/kubernetes"
+  branch = "master"
+
+
 [prune]
   go-tests = true
   unused-packages = true

@@ -3,10 +3,11 @@ package service
 import (
 	"errors"
 	"net/http"
-
+	sess "github.com/zale144/instagram-bot/sessions/proto"
 	"github.com/labstack/echo"
-	"github.com/zale144/instagram-bot/web/client"
 	"github.com/zale144/instagram-bot/web/model"
+	"context"
+	"github.com/micro/go-micro/client"
 )
 
 type UserService struct{}
@@ -18,7 +19,12 @@ func (ur UserService) GetProfile(c echo.Context) error {
 	account := c.Param("account")
 	username := c.Param("user")
 
-	details, err := client.Session{}.UserInfo(account, username)
+	sClient := sess.NewInstaService("session", client.DefaultClient)
+	rsp, err := sClient.UserInfo(context.Background(), &sess.UserReq{
+		Account:  account,
+		Username: username,
+	})
+	details := rsp.User
 	if err != nil {
 		err := errors.New("cannot get user info")
 		c.Error(echo.NewHTTPError(http.StatusBadRequest, err.Error()))

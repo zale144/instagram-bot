@@ -1,39 +1,43 @@
 package main
 
 import (
-	"flag"
 	"log"
 
 	"github.com/zale144/instagram-bot/api/model"
 	"github.com/zale144/instagram-bot/api/service"
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
-	"github.com/zale144/instagram-bot/api/handlers"
 	"os"
-	"fmt"
+	k8s "github.com/micro/kubernetes/go/micro"
+	"github.com/micro/go-micro/client"
+	"github.com/micro/go-micro/server"
+	cli "github.com/micro/go-plugins/client/grpc"
+	srv "github.com/micro/go-plugins/server/grpc"
+	"github.com/zale144/instagram-bot/api/handlers"
+	proto "github.com/zale144/instagram-bot/api/proto"
+	"github.com/micro/go-micro"
 )
 
-var (
+/*var (
 	dbUser = os.Getenv("DB_USER")
 	dbPass = os.Getenv("DB_PASS")
 	dbName = os.Getenv("DB_NAME")
 	dbConnString = fmt.Sprintf("postgres://%s:%s@db/%s?sslmode=disable",	dbUser, dbPass, dbName)
 	dbInfo = flag.String("db-info", dbConnString, "database connection string")
 	pImages   = flag.String("pImages", "files/images/profiles", "path to profile images folder")
-)
+)*/
 
 func main() {
-	flag.Parse()
-	go handlers.RegisterService()
+	//flag.Parse()
 
 	model.WebURL = os.Getenv("WEB_HOST")
 
-	model.DBInfo = *dbInfo
+	/*model.DBInfo = *dbInfo
 	err := model.InitDB()
 	if err != nil {
 		log.Fatalf("cannot initialize db: %v", err)
 		return
-	}
+	}*/
 
 	e := echo.New()
 
@@ -44,7 +48,7 @@ func main() {
 		Format: "method=${method}, uri=${uri}, status=${status}\n",
 	}))
 
-	e.Static("/profile-images", *pImages)
+	e.Static("/profile-images", "files/images/profiles")
 
 	api := e.Group("/api")
 
@@ -64,9 +68,28 @@ func main() {
 	api.GET("/search/:user", service.UserService{}.Search)
 	api.GET("/follow/:user", service.UserService{}.Follow)
 
-	apiPort := os.Getenv("API_PORT")
-	if apiPort == "" {
-		apiPort = "4041"
+	os.Setenv("MICRO_REGISTRY", "kubernetes")
+	os.Setenv("MICRO_SELECTOR", "static")
+
+	regService()
+
+	//e.Logger.Fatal(e.Start(":8081"))
+}
+
+func regService()  {
+	srvc := k8s.NewService(
+		micro.Name("api"),
+		micro.Version("latest"),
+	)
+
+	srvc.Init()
+	proto.RegisterLoginServiceHandler(server.DefaultServer, &handlers.LoginService{})
+	proto.RegisterApiHandler(server.DefaultServer, &handlers.Api{})
+
+	client.DefaultClient = cli.NewClient()
+	server.DefaultServer = srv.NewServer()
+
+	if err := srvc.Run(); err != nil {
+		log.Fatal(err)
 	}
-	e.Logger.Fatal(e.Start(":" + apiPort))
 }
