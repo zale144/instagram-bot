@@ -118,7 +118,7 @@
   version = "v0.9.0"
 
 [[projects]]
-  digest = "1:a41d225b63e2dc9f93f2f4a0a22680a70b2b79922cdc4e53d39274d1955d788d"
+  digest = "1:8404c9315b171eaf07431b091a76ae476ebfbab78701acb3532f2e2c3ffcd0ad"
   name = "github.com/micro/go-plugins"
   packages = [
     "client/grpc",
@@ -126,7 +126,6 @@
     "registry/kubernetes/client",
     "registry/kubernetes/client/api",
     "registry/kubernetes/client/watch",
-    "selector/cache",
     "selector/static",
     "server/grpc",
   ]
@@ -143,12 +142,12 @@
   revision = "a581a57b513351792b9f21fc8b95d87b1c5a95da"
 
 [[projects]]
-  digest = "1:f4e23216c844a5d78d54a792e82aa46a1904357b0f3aa5c44cc2c667316087b3"
+  branch = "master"
+  digest = "1:caaeb6679bbeaec0630b9cfd0bcb797762ec36525e7ef322f91e034458b5fd4b"
   name = "github.com/micro/kubernetes"
   packages = ["go/micro"]
   pruneopts = "UT"
-  revision = "1b3cb85ccc7a367049117e263edc1a26a98b20b5"
-  version = "v0.1.0"
+  revision = "e0f53bfc450e56427b14023e0f4f00d71da1ec7c"
 
 [[projects]]
   branch = "master"

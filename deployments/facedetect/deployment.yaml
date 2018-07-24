@@ -1,0 +1,22 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  namespace: default
+  name: facedetectdepl
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: facedetect
+    spec:
+      containers:
+      - name: facedetect
+        command: ["python3", "sidecar_server.py"]
+        image: livelance/facedetect:v0.0.1
+        env:
+          - name: RPC_URI
+            value: "http://192.168.99.100:30001"
+        ports:
+        - containerPort: 8080
+          name: facedetect-port

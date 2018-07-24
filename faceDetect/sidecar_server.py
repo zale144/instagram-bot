@@ -13,4 +13,4 @@ def application(request):
 
 if __name__ == '__main__':
     host = os.environ['RPC_URI']
-    run_simple(host, 4000, application)
+    run_simple("0.0.0.0", 4000, application)

@@ -2,26 +2,26 @@ apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
   namespace: default
-  name: sessionsdepl
+  name: htmltoimagedepl
 spec:
   replicas: 1
   template:
     metadata:
       labels:
-        app: sessions
+        app: htmltoimage
     spec:
       containers:
-      - name: sessions
+      - name: htmltoimage
         command: [
-      		"./instagram-bot.sessions",
+      		"./htmlToimage",
       		"--server_address=0.0.0.0:8080",
       		"--broker_address=0.0.0.0:10001",
       		"--selector=static",
       	]
-        image: livelance/sessions:v0.0.1
+        image: livelance/htmltoimage:v0.0.1
         env:
-          - name: RPC_URI
-            value: "http://192.168.99.100:30004"
+          - name: WEB_LOCAL
+            value: "http://192.168.99.100:30001"
         ports:
         - containerPort: 8080
-          name: sessions-port
+          name: facedetect-port

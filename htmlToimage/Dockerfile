@@ -28,3 +28,5 @@ RUN apt-get update \
     && apt-get purge -y --auto-remove git wget
 
 WORKDIR /app
+
+CMD ["./htmlToimage"]
