@@ -23,7 +23,6 @@ func GetNumberOfFaces(url string) (int, error) {
 	}
 	rsp, err := rpcCall(request)
 	if err != nil {
-		log.Println(err)
 		return -1, err
 	}
 	tResp := Response{}

@@ -9,7 +9,6 @@ import (
 var (
 	DBInfo string
 	DB     *gorm.DB
-	//DE, _ = time.LoadLocation("Europe/Berlin")
 )
 
 // openDB prepares a db connection for postgres

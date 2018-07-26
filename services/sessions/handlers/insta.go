@@ -28,6 +28,7 @@ func (m *Insta) Message(ctx context.Context, req *proto.MessageRequest, rsp *pro
 	response, err := s.SendDirectMessage(fmt.Sprintf("%v", userByName.ID), req.Text, req.Title)
 	if err != nil {
 		log.Println(err)
+		return err
 	}
 	rsp.Response = response
 	return err

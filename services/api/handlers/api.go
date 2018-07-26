@@ -25,11 +25,10 @@ type LoginService struct{}
 
 // Login handles a login request for the api service
 func (l *LoginService) Login(ctx context.Context, req *proto.LoginReq, rsp *proto.LoginResp) error {
-	log.Println("GOT API LOGIN REQUEST")
 	claims := &model.JwtCustomClaims{
-		req.Username,
-		true,
-		jwt.StandardClaims{
+		Name: req.Username,
+		Admin: true,
+		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: time.Now().Add(24 * time.Hour).Unix(),
 		},
 	}
@@ -44,18 +43,3 @@ func (l *LoginService) Login(ctx context.Context, req *proto.LoginReq, rsp *prot
 	rsp.Token = t
 	return nil
 }
-
-/*// RegisterService registers the 'api' microservice
-func RegisterService() {
-	Srv = micro.NewService(
-		micro.Name("api"),
-		micro.Version("latest"),
-	)
-	Srv.Init()
-	proto.RegisterApiHandler(Srv.Server(), new(Api))
-	proto.RegisterLoginServiceHandler(Srv.Server(), new(LoginService))
-
-	if err := Srv.Run(); err != nil {
-		log.Fatal(err)
-	}
-}*/

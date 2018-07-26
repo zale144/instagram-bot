@@ -70,11 +70,12 @@ func GetSession(account *model.Account) (*Session, error) { // return sessions
 	if ret == nil {
 		s, err := NewSession(account)
 		if err != nil || s == nil {
-			log.Println(err)
 			return nil, err
 		}
+		SaveSession(s, read.Key)
 		ret = s
 	}
+	log.Printf("Read '%s' from sessions map\n", read.Key)
 	return ret, nil
 }
 

@@ -14,7 +14,7 @@ type HtmlToImage struct{}
 func (h HtmlToImage) Process(ctx context.Context, req *proto.ImageRequest, rsp proto.HtmlToImage_ProcessStream) error {
 	res, err := service.GenerateImage(req)
 	if err != nil {
-		log.Println(err)
+		log.Println("can't generate file ", err)
 		return err
 	}
 	// return the processed image as a stream

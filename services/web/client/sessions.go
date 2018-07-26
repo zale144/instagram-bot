@@ -17,7 +17,6 @@ func (s Session) Get(account, password string) (string, error) {
 		Password: password,
 	})
 	if err != nil {
-		log.Println(err)
 		return "", err
 	}
 	return rsp.Account, nil
@@ -30,7 +29,6 @@ func (s Session) Remove(account string) (string, error) {
 		Account: account,
 	})
 	if err != nil {
-		log.Println(err)
 		return "", err
 	}
 	return rsp.Account, nil

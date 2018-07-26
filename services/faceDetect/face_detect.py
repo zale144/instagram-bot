@@ -25,5 +25,4 @@ def number_of_faces(url):
         minSize=(30, 30)
         )
     num_of_faces = len(faces)
-    print(num_of_faces)
-    return num_of_faces 
+    return num_of_faces

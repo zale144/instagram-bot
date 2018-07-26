@@ -3,9 +3,9 @@ package service
 import (
 	"errors"
 	"fmt"
-	"log"
 	"github.com/zale144/goinsta"
 	"github.com/zale144/instagram-bot/services/sessions/model"
+	"log"
 )
 
 // Session implements the proto service Session
@@ -20,13 +20,12 @@ func NewSession(account *model.Account) (*Session, error) {
 	}
 	err := s.insta.Login()
 	if err != nil || s.insta.Account == nil {
-		err = errors.New("Bad credentials or permission needed from Instagram")
 		log.Println(err)
+		err = errors.New("Bad credentials or permission needed from Instagram")
 		return nil, err
 	}
 	err = s.insta.Export(account.Username)
 	if err != nil {
-		log.Println(err)
 		return nil, err
 	}
 	// and import again
@@ -34,7 +33,6 @@ func NewSession(account *model.Account) (*Session, error) {
 	if s.insta.Account == nil {
 		msg := fmt.Sprintf("cannot import goinsta config with name: %s", account.Username)
 		err := errors.New(msg)
-		log.Println(err)
 		return nil, err
 	}
 	// save to cache

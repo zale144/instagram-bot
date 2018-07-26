@@ -18,6 +18,7 @@ import (
 func main() {
 
 	model.WebURL = os.Getenv("WEB_HOST")
+	model.ImagesPath = "files/images/profiles"
 
 	dbUser := os.Getenv("DB_USER")
 	dbPass := os.Getenv("DB_PASS")
@@ -39,7 +40,7 @@ func main() {
 		Format: "method=${method}, uri=${uri}, status=${status}\n",
 	}))
 
-	e.Static("/profile-images", "files/images/profiles")
+	e.Static("/profile-images", model.ImagesPath)
 
 	api := e.Group("/api")
 

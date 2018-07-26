@@ -2,7 +2,6 @@ package service
 
 import (
 	"errors"
-	"fmt"
 	"log"
 	"net/url"
 	"sort"
@@ -37,7 +36,6 @@ func (s *Session) GetUsersByHashtag(hashtag string, limit int) []proto.User {
 		for i := range h.Sections {
 			for _, i := range h.Sections[i].LayoutContent.Medias {
 				if len(i.Item.Images.Versions) != 0 {
-					fmt.Printf("url: %s  - user: %s\n", i.Item.Images.Versions[0].URL, i.Item.User.Username)
 					if Contains(users, i.Item.User.Username) {
 						continue
 					}
@@ -65,11 +63,7 @@ func Contains(users []proto.User, username string) bool {
 
 // GetUserByName will retrieve the user struct from Instagram API
 func (s *Session) GetUserByName(name string) (*goinsta.User, error) {
-	user, err := s.insta.Profiles.ByName(name)
-	if err != nil {
-		log.Println(err)
-	}
-	return user, err
+	return s.insta.Profiles.ByName(name)
 }
 
 // getLargestCandidate gets the largest picture from an image item
@@ -86,7 +80,7 @@ func getLargestCandidate(candidates []goinsta.Candidate) goinsta.Candidate {
 // GetRecentUserMedias get the recent user media feed
 func GetRecentUserMedias(user *goinsta.User) ([]*model.Media, error) {
 	media := user.Feed()
-	fmt.Println(media.Error())
+	log.Println(media.Error())
 
 	var images []*model.Media
 	for media.Next() {
@@ -133,7 +127,6 @@ func (s *Session) GetProfileInfo(name string) (proto.User, error) {
 	// get the user by name
 	user, err := s.GetUserByName(name)
 	if err != nil {
-		log.Println(err)
 		return userDetails, err
 	}
 	// if user's account is private
@@ -147,13 +140,11 @@ func (s *Session) GetProfileInfo(name string) (proto.User, error) {
 	// get the recent user images
 	images, err := GetRecentUserMedias(user)
 	if err != nil {
-		log.Println(err)
 		return userDetails, err
 	}
 	// get the image with most likes
 	img, err := GetImageWithMostLikes(images)
 	if err != nil {
-		log.Println(err)
 		return userDetails, err
 	}
 	userDetails = ConvertUser(user)
@@ -165,10 +156,8 @@ func (s *Session) GetProfileInfo(name string) (proto.User, error) {
 func (s *Session) SendDirectMessage(id, message, title string) (string, error) {
 	response, err := s.insta.DirectMessage(id, message, title)
 	if err != nil {
-		log.Println(err)
 		return "", err
 	}
-	fmt.Println(response)
 	return response.Status, nil
 }
 
@@ -176,20 +165,18 @@ func (s *Session) SendDirectMessage(id, message, title string) (string, error) {
 func (s *Session) Follow(username string) (proto.User, error) {
 	user, err := s.GetUserByName(username)
 	if err != nil {
-		log.Println(err)
 		return proto.User{}, err
 	}
 	err = user.Follow()
 	if err != nil {
-		log.Println(err)
 		return proto.User{}, err
 	}
 	return ConvertUser(user), nil
 }
 
 // Logout will logout the user from Instagram
-func (s *Session) Logout() {
-	s.insta.Logout()
+func (s *Session) Logout() error {
+	return s.insta.Logout()
 }
 
 // GetImageWithMostLikes gets the image with most likes
@@ -208,9 +195,8 @@ func GetImageWithMostLikes(images []*model.Media) (*model.Media, error) {
 			p, err := client.GetNumberOfFaces(img.URL)
 			if err != nil {
 				log.Println(err)
+				// no return here
 			}
-			fmt.Println("FOR URL: ", img.URL)
-			fmt.Printf("Found %v persons\n", p)
 			if img.IsLandscape {
 				mostLiked = img
 				if img.IsPicOfUser || p > 0 {

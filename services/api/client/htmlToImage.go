@@ -2,7 +2,6 @@ package client
 
 import (
 	"context"
-	"log"
 	htmlToImage "github.com/zale144/instagram-bot/services/htmlToimage/proto"
 	"github.com/zale144/instagram-bot/services/api/model"
 )
@@ -14,8 +13,7 @@ func (h HtmlToImage) Process(options htmlToImage.ImageRequest) (*htmlToImage.Ima
 	hClient := htmlToImage.NewHtmlToImageService("htmltoimage", model.Service.Client())
 	hResp, err := hClient.Process(context.TODO(), &options)
 	if err != nil {
-		log.Println(err)
-		return &htmlToImage.ImageResponse{}, err
+		return nil, err
 	}
 	return hResp.Recv()
 }

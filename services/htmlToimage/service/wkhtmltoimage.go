@@ -4,10 +4,8 @@ package service
 import (
 	"bytes"
 	"errors"
-	"fmt"
 	"image/jpeg"
 	"image/png"
-	"log"
 	"os/exec"
 	"strconv"
 	"strings"
@@ -23,17 +21,13 @@ func GenerateImage(options *proto.ImageRequest) ([]byte, error) {
 	if err != nil {
 		return []byte{}, err
 	}
-	fmt.Println(arr)
 	cmd := exec.Command("wkhtmltoimage", arr...)
 
 	if options.Html != "" {
 		cmd.Stdin = strings.NewReader(options.Html)
 	}
-	fmt.Println(options.Input)
 	output, err := cmd.CombinedOutput()
-
 	if err != nil {
-		log.Println("can't generate file ", err)
 		return nil, err
 	}
 	if options.Output == "" && len(output) > 0 {

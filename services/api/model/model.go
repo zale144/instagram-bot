@@ -9,13 +9,12 @@ import (
 )
 
 const (
-	CookieName          = "Instagram.bot.Challenge"
 	SECRET              = "$P$Bd2WdVjaRR/De58OX2qVu3XA6aiPaf."
-	HEADER_AUTH_USER_ID = "Auth-User-Id"
 )
 
 var (
 	WebURL string
+	ImagesPath string
 	Service micro.Service
 )
 

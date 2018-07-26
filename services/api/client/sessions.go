@@ -2,7 +2,6 @@ package client
 
 import (
 	"context"
-	"log"
 	sess "github.com/zale144/instagram-bot/services/sessions/proto"
 	"github.com/zale144/instagram-bot/services/api/model"
 )
@@ -16,7 +15,6 @@ func (s Session) FollowedUsers(account string) ([]*sess.User, error) {
 		Account: account,
 	})
 	if err != nil {
-		log.Println(err)
 		return nil, err
 	}
 	return rsp.Users, nil
@@ -30,7 +28,6 @@ func (s Session) UserInfo(account, username string) (*sess.User, error) {
 		Username: username,
 	})
 	if err != nil {
-		log.Println(err)
 		return nil, err
 	}
 	return rsp.User, nil
@@ -41,7 +38,6 @@ func (s Session) Message(req *sess.MessageRequest) (string, error) {
 	sClient := sess.NewInstaService("session", model.Service.Client())
 	sRsp, err := sClient.Message(context.TODO(), req)
 	if err != nil {
-		log.Println(err)
 		return "", err
 	}
 	return sRsp.Response, nil
@@ -53,7 +49,6 @@ func (s Session) UsersByHashtag(req *sess.UserReq) ([]*sess.User, error) {
 	sClient := sess.NewInstaService("session", model.Service.Client())
 	sRsp, err := sClient.UsersByHashtag(context.TODO(), req)
 	if err != nil {
-		log.Println(err)
 		return nil, err
 	}
 	return sRsp.Users, nil
@@ -67,7 +62,6 @@ func (s Session) Follow(account, username string) (*sess.User, error) {
 		Username: username,
 	})
 	if err != nil {
-		log.Println(err)
 		return nil, err
 	}
 	return sRsp.User, nil

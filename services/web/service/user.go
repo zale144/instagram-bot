@@ -6,6 +6,7 @@ import (
 	"github.com/labstack/echo"
 	"github.com/zale144/instagram-bot/services/web/model"
 	"github.com/zale144/instagram-bot/services/web/client"
+	"log"
 )
 
 type UserService struct{}
@@ -19,6 +20,7 @@ func (ur UserService) GetProfile(c echo.Context) error {
 
 	details, err := client.Insta{}.UserInfo(account, username)
 	if err != nil {
+		log.Println(err)
 		err := errors.New("cannot get user info")
 		c.Error(echo.NewHTTPError(http.StatusBadRequest, err.Error()))
 		return err

@@ -32,6 +32,7 @@ func (ur UserService) GetAllFollowed(c echo.Context) error {
 	// get all followed users
 	followedUsers, err := client.Session{}.FollowedUsers(username)
 	if err != nil {
+		log.Println(err)
 		c.Error(echo.NewHTTPError(http.StatusBadRequest, err.Error()))
 		return err
 	}
@@ -105,6 +106,7 @@ func (ur UserService) ProcessUsersByHashtag(c echo.Context) error {
 	ongoingJob, err := storage.JobStorage{}.GetOngoingByHashTag(params["hashtag"])
 	if err != nil {
 		log.Println(err)
+		// no return here
 	}
 	if ongoingJob != nil {
 		err := errors.New("a job with the same hashtag is already running")
@@ -117,38 +119,38 @@ func (ur UserService) ProcessUsersByHashtag(c echo.Context) error {
 
 	go func() {
 		processedUsers := []model.UserDetails{}
-		fmt.Println("GETTING USERS")
-		users, err := client.Session{}.UsersByHashtag(&sess.UserReq{
+		usrReq := &sess.UserReq{
 			Account: account,
 			Hashtag: params["hashtag"],
 			Limit: int64(limit),
-		})
+		}
+		users, err := client.Session{}.UsersByHashtag(usrReq)
+		if err != nil {
+			log.Println(err)
+			return
+		}
 		for _, u := range users {
 			processedUser, err := storage.ProcessedUserStorage{}.GetByUsername(u.Username)
 			if err != nil {
 				log.Println(err)
 				err = nil
+				// no return here
 			}
 			if processedUser != nil {
-				err := errors.New("user already processed")
-				log.Println(err)
-				err = nil
+				log.Println("user already processed")
 				continue
 			}
 			account = strings.Split(account, "@")[0]
 			if u.Username == account {
-				err := errors.New("should not process the job issuer")
-				log.Println(err)
-				err = nil
+				log.Println("should not process the job issuer")
 				continue
 			}
 			details := model.UserDetails{
-				u.Username,
-				u.FullName,
-				u.Description,
-				int(u.FollowerCount),
-				u.ProfilePicUrl,
-				"",
+				Username: u.Username,
+				FullName: u.FullName,
+				Description: u.Description,
+				FollowerCount: int(u.FollowerCount),
+				ProfilePicUrl: u.ProfilePicUrl,
 			}
 			params["username"] = u.Username
 
@@ -157,22 +159,25 @@ func (ur UserService) ProcessUsersByHashtag(c echo.Context) error {
 			_, err = ur.Process(params)
 			if err != nil {
 				log.Println(err)
+				err = nil
+				// no return here
 			}
 			user.Successful = err == nil
-			storage.ProcessedUserStorage{}.Insert(user)
-			fmt.Printf("processed: %s\n", u.Username)
+			err = storage.ProcessedUserStorage{}.Insert(user)
+			if err != nil {
+				log.Println(err)
+				// no return here
+			}
 			processedUsers = append(processedUsers, details)
 			if len(processedUsers) == limit {
 				goto end
 			}
 		}
 	end:
-		fmt.Println("DONE")
 		err = storage.JobStorage{}.NewJobUpdater(job.ID).FinishedAt(time.Now().Unix()).Update(nil)
 		if err != nil {
 			log.Println(err)
-			err = errors.New("error updating job")
-			c.Error(echo.NewHTTPError(http.StatusBadRequest, err.Error()))
+			// no return here
 		}
 		return
 	}()
@@ -183,8 +188,6 @@ func (ur UserService) ProcessUsersByHashtag(c echo.Context) error {
 func (ur UserService) Process(params map[string]string) (string, error) {
 	url := "/user-info/" + params["account"] + "/" + params["username"]
 
-	fmt.Println("user info at url: ", url)
-	fmt.Println(params["username"])
 	options := htmlToImage.ImageRequest{
 		Input:  url,
 		Format: "jpg",
@@ -214,7 +217,7 @@ func (ur UserService) Process(params map[string]string) (string, error) {
 		log.Println(err)
 		return "", err
 	}
-	path := "files/images/profiles/" + options.Name + ".jpg"
+	path := model.ImagesPath + options.Name + ".jpg"
 	f, err := os.Create(path)
 	if err != nil {
 		log.Println(err)
@@ -232,13 +235,11 @@ func (ur UserService) Process(params map[string]string) (string, error) {
 		Title:     params["title"],
 		Text:      message,
 	}
-	mRsp, err := client.Session{}.Message(mReq)
+	_, err = client.Session{}.Message(mReq)
 	if err != nil {
 		fmt.Println(err)
 		return "", nil
 	}
-	fmt.Println(mRsp)
-
 	return message, nil
 }
 

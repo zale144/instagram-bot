@@ -31,26 +31,23 @@ func (ar AccountService) Login(c echo.Context) error {
 	if username == "" || password == "" {
 		return echo.ErrUnauthorized
 	}
-	acc, err := client.Session{}.Get(username, password)
+	_, err := client.Session{}.Get(username, password)
 	if err != nil {
 		c.Error(echo.NewHTTPError(http.StatusBadRequest, err.Error()))
 		return err
 	}
-	fmt.Printf("logged in as: %s\n", acc)
 
 	token, err := client.Api{}.Login(username)
 	if err != nil {
 		c.Error(echo.NewHTTPError(http.StatusBadRequest, err.Error()))
 		return err
 	}
-	log.Printf("token: %s\n", token)
 	// get the session cookie
 	cookie := &http.Cookie{
 		Name:  model.CookieName,
 		Value: authcookie.NewSinceNow(username, 24*time.Hour, []byte(model.SECRET)),
 		Path:  "/",
 	}
-	fmt.Printf("got cookie: %v\n", cookie)
 	c.SetCookie(cookie)
 
 	return c.JSON(http.StatusOK, echo.Map{
@@ -71,14 +68,13 @@ func (ar AccountService) Logout(c echo.Context) error {
 
 	user, err := GetUsernameFromCookie(&c)
 	if err == nil {
-		acc, err := client.Session{}.Remove(user)
+		_, err := client.Session{}.Remove(user)
 		if err != nil {
-			c.Error(echo.NewHTTPError(http.StatusBadRequest, err.Error()))
-			return err
+			log.Println(err)
 		}
-		fmt.Printf("logged out user: %s\n", acc)
+	} else {
+		log.Println(err)
 	}
-
 	return c.Redirect(http.StatusSeeOther, "/login")
 }
 
@@ -89,14 +85,13 @@ func GetUsernameFromCookie(cp *echo.Context) (string, error) {
 	cookieStr := headers.Get("cookie")
 	if cookieStr == "" {
 		err := fmt.Errorf("empty cookie")
-		log.Println(err.Error())
-	}
-	value := strings.Replace(cookieStr, model.CookieName+"=", "", -1)
-	email := authcookie.Login(value, []byte(model.SECRET))
-	if email == "" {
-		err := fmt.Errorf("no user authenticated")
-		log.Println(err.Error())
 		return "", err
 	}
-	return email, nil
+	value := strings.Replace(cookieStr, model.CookieName+"=", "", -1)
+	username := authcookie.Login(value, []byte(model.SECRET))
+	if username == "" {
+		err := fmt.Errorf("no user authenticated")
+		return "", err
+	}
+	return username, nil
 }

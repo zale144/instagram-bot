@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"github.com/zale144/instagram-bot/services/api/storage"
 	"github.com/labstack/echo"
+	"log"
 )
 
 type JobService struct{}
@@ -13,6 +14,7 @@ type JobService struct{}
 func (jr JobService) GetJobs(c echo.Context) error {
 	jobs, err := storage.JobStorage{}.GetAll()
 	if err != nil {
+		log.Println(err)
 		err := errors.New("cannot get jobs")
 		c.Error(echo.NewHTTPError(http.StatusBadRequest, err.Error()))
 		return err
