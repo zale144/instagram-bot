@@ -1,6 +1,6 @@
 # Instagram Bot
 
-Instagram Bot is a concept app that demonstrates how you can promote your website/platform to users on Instagram.
+Instagram Bot is a concept app that demonstrates how you can promote your website/platform on Instagram.
 
 Initially it was a monolith, but I've rewritten it to follow the Microservice architecture.
 
@@ -15,7 +15,7 @@ Initially it was a monolith, but I've rewritten it to follow the Microservice ar
 
 ## Technologies/libraries used
 
-- [GoLang](https://golang.org)
+- [Golang](https://golang.org)
 - [Micro](https://micro.mu)
 - [gRPC](https://grpc.io)
 - [Kubernetes](https://kubernetes.io)
