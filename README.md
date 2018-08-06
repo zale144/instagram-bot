@@ -13,6 +13,14 @@ Initially I have written it as a monolithic web application, but I've rewritten 
 - [No account creation, login with your Instagram credentials](#login-with-your-instagram-credentials)
 - [Uses face detection to select a suitable background image](#background-image-selected-by-face-detection)
 
+## Microservices
+
+- **web** - Go
+- **api** - Go
+- **session** - Go
+- **htmlToImage** - Go
+- **faceDetect** - Python
+
 ## Technologies/libraries used
 
 - [Golang](https://golang.org)
